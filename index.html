@@ -340,6 +340,24 @@
             border-radius: var(--radius-xs);
         }
 
+        img.universal-img {
+            opacity: 0;
+            background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-shine) 50%, var(--skeleton-base) 75%);
+            background-size: 200% 100%;
+            animation: skeletonShimmer 1.5s infinite linear;
+            transition: opacity 0.35s ease;
+        }
+
+        img.universal-img.loaded {
+            opacity: 1;
+            animation: none;
+        }
+
+        .adsterra-slot {
+            margin: 20px;
+            min-height: 72px;
+        }
+
         .skel-cover { 
             width: 100%; 
             height: 100%; 
@@ -452,6 +470,17 @@
             height: 100%; 
             object-fit: cover; 
             transition: opacity 0.3s;
+            opacity: 0;
+            background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-shine) 50%, var(--skeleton-base) 75%);
+            background-size: 200% 100%;
+            animation: skeletonShimmer 1.4s linear infinite;
+        }
+
+        .header-profile-trigger img.loaded,
+        .profile-avatar-wrap img.loaded {
+            opacity: 1;
+            animation: none;
+            background: #eef2f5;
         }
 
         nav { 
@@ -1653,6 +1682,36 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-box.locked-theme {
+            filter: blur(0);
+            cursor: pointer;
+        }
+
+        .theme-box.locked-theme > *:not(.theme-lock-overlay) {
+            filter: blur(4px);
+            opacity: 0.75;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .theme-lock-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.2));
+            z-index: 3;
         }
 
         .theme-icon {
@@ -1664,6 +1723,84 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+        }
+
+        .character-avatar {
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 12px;
+            position: relative;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid var(--surface);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .character-avatar .skeleton {
+            border-radius: inherit;
+        }
+
+        .character-avatar img {
+            margin: 0;
+            border: none;
+            box-shadow: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .recom-scroller {
+            padding: 10px 4px 14px;
+            gap: 14px;
+        }
+
+        .recom-card {
+            width: clamp(138px, 34vw, 196px);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .recom-poster {
+            aspect-ratio: 3 / 4;
+            width: 100%;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            position: relative;
+            box-shadow: var(--shadow-md);
+            background: var(--surface);
+        }
+
+        .recom-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.3s ease;
+        }
+
+        .recom-card:active .recom-poster img {
+            transform: scale(0.96);
+        }
+
+        .recom-title {
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1.35;
+            color: var(--text-main);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 36px;
+            padding: 0 2px;
+        }
+
+        @media (min-width: 840px) {
+            .recom-card {
+                width: clamp(172px, 20vw, 220px);
+            }
         }
 
         /* ==========================================================================
@@ -1825,7 +1962,7 @@
     <header>
         <div class="header-brand font-signature">Benzyten</div>
         <div class="header-profile-trigger" onclick="switchAppTab('profile', document.getElementById('nav-profile'))">
-            <img class="dicebear-avatar-img" src="" alt="Profile">
+            <img class="dicebear-avatar-img universal-img" src="" alt="Profile">
         </div>
     </header>
 
@@ -1892,7 +2029,7 @@
     <div id="profile" class="screen">
         <div class="profile-header">
             <div class="profile-avatar-wrap" id="easter-egg-trigger">
-                <img class="dicebear-avatar-img" src="" alt="Avatar">
+                <img class="dicebear-avatar-img universal-img" src="" alt="Avatar">
                 <div class="plus-crown" id="plus-crown-ui">PRO</div>
             </div>
             <h2 id="profile-name-ui" style="margin:0; font-size:28px; font-weight:800;">Guest Profiler</h2>
@@ -2116,6 +2253,8 @@
             // Using Notionists style with pastel background colors
             const url = `https://api.dicebear.com/9.x/notionists/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9`;
             document.querySelectorAll('.dicebear-avatar-img').forEach(img => {
+                img.classList.remove('loaded');
+                img.onload = () => img.classList.add('loaded');
                 img.src = url;
             });
         };
@@ -2210,15 +2349,28 @@
         /**
          * Returns an HTML string for the promotional Banner for Guest Users.
          */
-        const getAdBannerHTML = () => {
+        const getAdBannerHTML = () => getExploreAdsterraHTML();
+
+        const getExploreAdsterraHTML = () => {
             return `
-                <div class="bz-ad-banner anim-fade-up">
-                    <span class="bz-ad-badge">Benzyten+</span>
-                    <h4 class="bz-ad-title">Unlock the Archives</h4>
-                    <p class="bz-ad-desc">Remove search limits, unlock full casting, and get access to your local Watchlist library.</p>
-                    <button class="bz-ad-btn ripple-btn" onclick="document.getElementById('easter-egg-trigger').click()">Unlock Now</button>
+                <div class="adsterra-slot">
+                    <script async="async" data-cfasync="false" src="https://pl28830854.effectivegatecpm.com/cc1a2d5641768007a7aeae371f764099/invoke.js"></script>
+                    <div id="container-cc1a2d5641768007a7aeae371f764099"></div>
                 </div>
             `;
+        };
+
+        const onUniversalImageLoad = (img) => {
+            if (!img) return;
+            img.classList.add('loaded');
+            const skel = img.previousElementSibling;
+            if (skel && skel.classList && skel.classList.contains('skeleton')) skel.remove();
+        };
+
+        const onUniversalImageError = (img, fallback = '') => {
+            if (!img) return;
+            if (fallback) img.src = fallback;
+            onUniversalImageLoad(img);
         };
 
         // --------------------------------------------------------------------------
@@ -2487,7 +2639,7 @@
                 document.getElementById('explore-featured').innerHTML = shuffled.slice(0, 5).map((a, i) => `
                     <div class="hero-cover anim-fade-up" style="animation-delay: ${i * 0.1}s" onclick="loadDetail(${a.mal_id})">
                         <div class="skeleton skel-cover"></div>
-                        <img src="${a.images.jpg.large_image_url}" onload="this.style.opacity=1; this.previousElementSibling.remove()">
+                        <img class="universal-img" src="${a.images.jpg.large_image_url}" onload="onUniversalImageLoad(this)">
                         <div class="hero-cover-overlay">
                             <span class="hero-badge">${a.type}</span>
                             <h2>${a.title}</h2>
@@ -2498,7 +2650,7 @@
                 // Promotional Ad Injection (For Guests only)
                 const adContainer = document.getElementById('explore-ad-container');
                 if(!APP_STATE.isPro) {
-                    adContainer.innerHTML = getAdBannerHTML();
+                    adContainer.innerHTML = getExploreAdsterraHTML();
                 } else {
                     adContainer.innerHTML = '';
                 }
@@ -2509,7 +2661,7 @@
                         <div class="list-index">${(index+1).toString().padStart(2, '0')}</div>
                         <div class="list-thumb">
                             <div class="skeleton skel-cover"></div>
-                            <img src="${a.images.jpg.image_url}" onload="this.style.opacity=1; this.previousElementSibling.remove()">
+                            <img class="universal-img" src="${a.images.jpg.image_url}" onload="onUniversalImageLoad(this)">
                         </div>
                         <div class="list-meta">
                             <h4>${a.title}</h4>
@@ -2644,20 +2796,32 @@
                     const ops = a.theme.openings.slice(0, 2);
                     const eds = a.theme.endings.slice(0, 1);
                     
-                    ops.forEach(op => {
-                        themesHtml += `
-                            <div class="theme-box">
-                                <div class="theme-icon"><i data-lucide="music" size="18"></i></div>
-                                <div><span style="font-size:10px; font-weight:800; color:var(--text-sub); text-transform:uppercase;">Opening</span><br>${op}</div>
-                            </div>`;
-                    });
-                    eds.forEach(ed => {
-                        themesHtml += `
-                            <div class="theme-box">
-                                <div class="theme-icon"><i data-lucide="headphones" size="18"></i></div>
-                                <div><span style="font-size:10px; font-weight:800; color:var(--text-sub); text-transform:uppercase;">Ending</span><br>${ed}</div>
-                            </div>`;
-                    });
+                    if (isGuest) {
+                        const guestThemes = [...ops, ...eds];
+                        guestThemes.forEach((track, idx) => {
+                            themesHtml += `
+                                <div class="theme-box locked-theme" onclick="openModal('pro-gate-modal', 'pg-modal-inner')">
+                                    <div class="theme-icon"><i data-lucide="music" size="18"></i></div>
+                                    <div><span style="font-size:10px; font-weight:800; color:var(--text-sub); text-transform:uppercase;">${idx < ops.length ? 'Opening' : 'Ending'}</span><br>${track}</div>
+                                    <div class="theme-lock-overlay"><i data-lucide="lock" size="14"></i> Pro only</div>
+                                </div>`;
+                        });
+                    } else {
+                        ops.forEach(op => {
+                            themesHtml += `
+                                <div class="theme-box">
+                                    <div class="theme-icon"><i data-lucide="music" size="18"></i></div>
+                                    <div><span style="font-size:10px; font-weight:800; color:var(--text-sub); text-transform:uppercase;">Opening</span><br>${op}</div>
+                                </div>`;
+                        });
+                        eds.forEach(ed => {
+                            themesHtml += `
+                                <div class="theme-box">
+                                    <div class="theme-icon"><i data-lucide="headphones" size="18"></i></div>
+                                    <div><span style="font-size:10px; font-weight:800; color:var(--text-sub); text-transform:uppercase;">Ending</span><br>${ed}</div>
+                                </div>`;
+                        });
+                    }
                     themesHtml += `</div>`;
                 }
 
@@ -2668,7 +2832,7 @@
                 let html = `
                     <div class="detail-hero-box">
                         <div class="skeleton skel-cover"></div>
-                        <img src="${a.images.jpg.large_image_url}" onload="this.style.opacity=1; this.previousElementSibling.remove()">
+                        <img class="universal-img" src="${a.images.jpg.large_image_url}" onload="onUniversalImageLoad(this)">
                         <div class="hero-gradient"></div>
                     </div>
                     
@@ -2744,6 +2908,22 @@
                 initScrollObserver();
 
                 // Fetch Cast Characters as a separate async call to speed up perceived load time
+                const castInjection = document.getElementById('cast-injection-point');
+                if (castInjection) {
+                    castInjection.innerHTML = `
+                        <h3 class="section-header scroll-reveal">Voice Cast</h3>
+                        <div class="characters-scroll scroll-reveal">
+                            ${Array(6).fill(`
+                                <div class="character-card">
+                                    <div class="character-avatar"><div class="skeleton skel-cover"></div></div>
+                                    <div class="skeleton skel-text short" style="height: 10px;"></div>
+                                    <div class="skeleton skel-text short" style="height: 8px; width: 70%; margin: 8px auto 0;"></div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
                 fetch(`https://api.jikan.moe/v4/anime/${id}/characters`).then(r=>r.json()).then(cRes => {
                     if(cRes.data) {
                         // Strict Guest Constraints: Capped at 5 members
@@ -2764,7 +2944,10 @@
                             <div class="characters-scroll scroll-reveal">
                                 ${castList.map(c => `
                                     <div class="character-card">
-                                        <img src="${c.character.images.jpg.image_url}" onerror="this.src='https://via.placeholder.com/88?text=N/A'">
+                                        <div class="character-avatar">
+                                            <div class="skeleton skel-cover"></div>
+                                            <img class="universal-img" src="${c.character.images.jpg.image_url}" onload="onUniversalImageLoad(this)" onerror="onUniversalImageError(this, 'https://via.placeholder.com/88?text=N/A')">
+                                        </div>
                                         <span class="char-name">${c.character.name}</span>
                                         <span class="char-role">${c.role}</span>
                                     </div>
@@ -2782,15 +2965,34 @@
                 });
 
                 // Fetch Recommendations (Bonus Data)
+                const recomInjection = document.getElementById('recom-injection-point');
+                if (recomInjection) {
+                    recomInjection.innerHTML = `
+                        <h3 class="section-header scroll-reveal">More Like This</h3>
+                        <div class="scroller-horizontal recom-scroller scroll-reveal">
+                            ${Array(5).fill(`
+                                <div class="recom-card">
+                                    <div class="recom-poster"><div class="skeleton skel-cover"></div></div>
+                                    <div class="skeleton skel-text short" style="height: 10px; margin: 0;"></div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
                 fetch(`https://api.jikan.moe/v4/anime/${id}/recommendations`).then(r=>r.json()).then(rRes => {
                     if(rRes.data && rRes.data.length > 0) {
                         const recs = rRes.data.slice(0, 5);
                         const recsHtml = `
                             <h3 class="section-header scroll-reveal">More Like This</h3>
-                            <div class="scroller-horizontal scroll-reveal" style="padding: 10px 0;">
+                            <div class="scroller-horizontal recom-scroller scroll-reveal">
                                 ${recs.map(r => `
-                                    <div class="list-thumb ripple-btn invert-ripple" style="width: 100px; height: 140px; cursor:pointer; flex-shrink:0;" onclick="loadDetail(${r.entry.mal_id})">
-                                        <img src="${r.entry.images.jpg.image_url}" style="opacity:1;">
+                                    <div class="recom-card ripple-btn invert-ripple" onclick="loadDetail(${r.entry.mal_id})">
+                                        <div class="recom-poster">
+                                            <div class="skeleton skel-cover"></div>
+                                            <img class="universal-img" src="${r.entry.images.jpg.image_url}" onload="onUniversalImageLoad(this)">
+                                        </div>
+                                        <div class="recom-title">${r.entry.title}</div>
                                     </div>
                                 `).join('')}
                             </div>
@@ -2923,7 +3125,7 @@
             // Populate Grid
             container.innerHTML = list.map((item, idx) => `
                 <div class="my-list-card anim-fade-up" style="animation-delay: ${idx * 0.05}s;" onclick="loadDetail(${item.id})">
-                    <img src="${item.image}" onload="this.style.opacity=1" onerror="this.src='https://via.placeholder.com/200x300?text=Cover+Missing'; this.style.opacity=1;">
+                    <img class="universal-img" src="${item.image}" onload="onUniversalImageLoad(this)" onerror="onUniversalImageError(this, 'https://via.placeholder.com/200x300?text=Cover+Missing')">
                     <div class="my-list-overlay">
                         <span class="my-list-title">${item.title}</span>
                     </div>
@@ -2970,7 +3172,7 @@
                             <div class="list-row anim-fade-up ripple-btn invert-ripple" style="animation-delay: ${idx * 0.05}s;" onclick="loadDetail(${a.mal_id})">
                                 <div class="list-thumb">
                                     <div class="skeleton skel-cover"></div>
-                                    <img src="${a.images.jpg.image_url}" onload="this.style.opacity=1; this.previousElementSibling.remove()">
+                                    <img class="universal-img" src="${a.images.jpg.image_url}" onload="onUniversalImageLoad(this)">
                                 </div>
                                 <div class="list-meta">
                                     <h4>${a.title}</h4>
@@ -3056,7 +3258,8 @@
                 if (isLocked) {
                     return `
                         <div class="wp-item locked anim-fade-up" style="animation-delay: ${idx * 0.08}s;" onclick="openModal('pro-gate-modal', 'pg-modal-inner')">
-                            <img src="${url}">
+                            <div class="skeleton skel-cover"></div>
+                            <img class="universal-img" src="${url}" onload="onUniversalImageLoad(this)">
                             <div class="wp-overlay">
                                 <i data-lucide="lock" size="32" class="wp-lock-icon"></i>
                                 <span class="wp-lock-text">Pro Unlock</span>
@@ -3067,7 +3270,7 @@
                     return `
                         <div class="wp-item anim-fade-up ripple-btn invert-ripple" style="animation-delay: ${idx * 0.08}s;" onclick="triggerDownloadConfirm('${url}')">
                             <div class="skeleton skel-cover"></div>
-                            <img src="${url}" onload="this.style.opacity=1; this.previousElementSibling.remove()">
+                            <img class="universal-img" src="${url}" onload="onUniversalImageLoad(this)">
                             <div class="wp-overlay">
                                 <div class="wp-btn"><i data-lucide="download" size="18"></i> Get HD</div>
                             </div>
