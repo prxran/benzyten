@@ -1692,6 +1692,7 @@
         }
 
         .theme-box.locked-theme > *:not(.theme-lock-overlay) {
+        .theme-box.locked-theme > * {
             filter: blur(4px);
             opacity: 0.75;
             user-select: none;
@@ -1754,11 +1755,11 @@
         }
 
         .recom-card {
-            width: clamp(138px, 34vw, 196px);
+            width: clamp(116px, 32vw, 152px);
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             cursor: pointer;
         }
 
@@ -1785,7 +1786,7 @@
         }
 
         .recom-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 800;
             line-height: 1.35;
             color: var(--text-main);
@@ -1793,14 +1794,7 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            min-height: 36px;
-            padding: 0 2px;
-        }
-
-        @media (min-width: 840px) {
-            .recom-card {
-                width: clamp(172px, 20vw, 220px);
-            }
+            min-height: 32px;
         }
 
         /* ==========================================================================
@@ -2349,28 +2343,22 @@
         /**
          * Returns an HTML string for the promotional Banner for Guest Users.
          */
-        const getAdBannerHTML = () => getExploreAdsterraHTML();
-
-        const getExploreAdsterraHTML = () => {
+        const getAdBannerHTML = () => {
             return `
-                <div class="adsterra-slot">
-                    <script async="async" data-cfasync="false" src="https://pl28830854.effectivegatecpm.com/cc1a2d5641768007a7aeae371f764099/invoke.js"></script>
-                    <div id="container-cc1a2d5641768007a7aeae371f764099"></div>
+                <div class="bz-ad-banner anim-fade-up">
+                    <span class="bz-ad-badge">Benzyten+</span>
+                    <h4 class="bz-ad-title">Unlock the Archives</h4>
+                    <p class="bz-ad-desc">Remove search limits, unlock full casting, and get access to your local Watchlist library.</p>
+                    <button class="bz-ad-btn ripple-btn" onclick="document.getElementById('easter-egg-trigger').click()">Unlock Now</button>
                 </div>
             `;
         };
 
-        const onUniversalImageLoad = (img) => {
-            if (!img) return;
-            img.classList.add('loaded');
-            const skel = img.previousElementSibling;
-            if (skel && skel.classList && skel.classList.contains('skeleton')) skel.remove();
-        };
-
-        const onUniversalImageError = (img, fallback = '') => {
-            if (!img) return;
-            if (fallback) img.src = fallback;
-            onUniversalImageLoad(img);
+        const getExploreAdsterraHTML = () => {
+            return `
+                <script async="async" data-cfasync="false" src="https://pl28830854.effectivegatecpm.com/cc1a2d5641768007a7aeae371f764099/invoke.js"></script>
+                <div id="container-cc1a2d5641768007a7aeae371f764099"></div>
+            `;
         };
 
         // --------------------------------------------------------------------------
@@ -2946,7 +2934,7 @@
                                     <div class="character-card">
                                         <div class="character-avatar">
                                             <div class="skeleton skel-cover"></div>
-                                            <img class="universal-img" src="${c.character.images.jpg.image_url}" onload="onUniversalImageLoad(this)" onerror="onUniversalImageError(this, 'https://via.placeholder.com/88?text=N/A')">
+                                            <img src="${c.character.images.jpg.image_url}" onload="this.style.opacity=1; this.previousElementSibling.remove()" onerror="this.src='https://via.placeholder.com/88?text=N/A'; this.style.opacity=1; this.previousElementSibling?.remove()">
                                         </div>
                                         <span class="char-name">${c.character.name}</span>
                                         <span class="char-role">${c.role}</span>
@@ -2990,7 +2978,7 @@
                                     <div class="recom-card ripple-btn invert-ripple" onclick="loadDetail(${r.entry.mal_id})">
                                         <div class="recom-poster">
                                             <div class="skeleton skel-cover"></div>
-                                            <img class="universal-img" src="${r.entry.images.jpg.image_url}" onload="onUniversalImageLoad(this)">
+                                            <img src="${r.entry.images.jpg.image_url}" onload="this.style.opacity=1; this.previousElementSibling.remove()">
                                         </div>
                                         <div class="recom-title">${r.entry.title}</div>
                                     </div>
