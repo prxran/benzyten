@@ -2335,6 +2335,13 @@
             `;
         };
 
+        const getExploreAdsterraHTML = () => {
+            return `
+                <script async="async" data-cfasync="false" src="https://pl28830854.effectivegatecpm.com/cc1a2d5641768007a7aeae371f764099/invoke.js"></script>
+                <div id="container-cc1a2d5641768007a7aeae371f764099"></div>
+            `;
+        };
+
         // --------------------------------------------------------------------------
         // 6. MATERIAL YOU DYNAMIC COLOR EXTRACTOR
         // --------------------------------------------------------------------------
@@ -2612,7 +2619,7 @@
                 // Promotional Ad Injection (For Guests only)
                 const adContainer = document.getElementById('explore-ad-container');
                 if(!APP_STATE.isPro) {
-                    adContainer.innerHTML = getAdBannerHTML();
+                    adContainer.innerHTML = getExploreAdsterraHTML();
                 } else {
                     adContainer.innerHTML = '';
                 }
