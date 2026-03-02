@@ -1,0 +1,3130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff" id="meta-theme-color">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Benzyten</title>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           1. CORE DESIGN SYSTEM & CSS VARIABLES
+           ========================================================================== */
+        :root {
+            /* Base Light Theme Colors */
+            --bg: #ffffff;
+            --surface: #f2f2f7;
+            --surface-hover: #e5e5ea;
+            --surface-elevated: #ffffff;
+            --text-main: #1c1c1e;
+            --text-sub: #8e8e93;
+            --border: #e5e5ea;
+            --border-light: #f2f2f7;
+            
+            /* Shadows for Depth & Elevation */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.12);
+            --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.16);
+            
+            /* Dynamic Theme Variables (Injected via Canvas Color Extractor) */
+            --dyn-primary: #007aff;
+            --dyn-primary-glow: rgba(0, 122, 255, 0.15);
+            --dyn-surface: rgba(0, 122, 255, 0.08);
+            --dyn-text: #007aff;
+            --dyn-contrast: #ffffff;
+            
+            /* UI Constants & Metrics */
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-blur: blur(25px);
+            --base-size: 16px;
+            
+            /* Strict 8-Point Grid Border Radii */
+            --radius-xs: 8px;
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --radius-pill: 9999px;
+            
+            /* System Utilities */
+            --skeleton-base: #e2e2e8;
+            --skeleton-shine: #f0f0f5;
+            --error-red: #ff3b30;
+            --error-bg: #ffeceb;
+            --success-green: #34c759;
+            --success-bg: #eaf9ed;
+            --warning-orange: #ff9500;
+            --warning-bg: #fff4e5;
+            
+            /* Z-Index Hierarchy */
+            --z-base: 1;
+            --z-nav: 100;
+            --z-header: 110;
+            --z-modal: 1000;
+            --z-toast: 2000;
+            --z-loader: 9999;
+        }
+
+        /* Dark Mode Overrides */
+        [data-theme="dark"] {
+            --bg: #000000;
+            --surface: #1c1c1e;
+            --surface-hover: #2c2c2e;
+            --surface-elevated: #242426;
+            --text-main: #ffffff;
+            --text-sub: #8e8e93;
+            --border: #38383a;
+            --border-light: #2c2c2e;
+            
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.7);
+            --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.9);
+            
+            --glass-bg: rgba(11, 11, 11, 0.85);
+            --skeleton-base: #2c2c2e;
+            --skeleton-shine: #3a3a3c;
+            
+            --error-bg: rgba(255, 59, 48, 0.15);
+            --success-bg: rgba(52, 199, 89, 0.15);
+            --warning-bg: rgba(255, 149, 0, 0.15);
+            
+            --dyn-primary-glow: rgba(0, 122, 255, 0.25);
+            --dyn-surface: rgba(0, 122, 255, 0.15);
+        }
+
+        /* ==========================================================================
+           2. GLOBAL RESETS & TYPOGRAPHY
+           ========================================================================== */
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            outline: none; 
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            font-size: var(--base-size);
+            line-height: 1.5;
+            overflow-x: hidden;
+            transition: background 0.4s ease, color 0.4s ease, font-size 0.2s ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Dynamic Ambient Glow matching the Material Theme */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            height: 100vh;
+            background: linear-gradient(to bottom, var(--dyn-primary-glow) 0%, transparent 65%);
+            z-index: -1;
+            pointer-events: none;
+            transition: background 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        button, input, select, textarea { 
+            font-family: inherit; 
+            color: inherit; 
+        }
+        
+        button { 
+            cursor: pointer; 
+            border: none;
+            background: transparent;
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        img { 
+            max-width: 100%; 
+            display: block; 
+            height: auto;
+        }
+
+        a { 
+            text-decoration: none; 
+            color: inherit; 
+        }
+
+        ul, ol {
+            list-style: none;
+        }
+
+        .font-signature {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* ==========================================================================
+           3. ADVANCED MICRO-ANIMATIONS & KEYFRAMES
+           ========================================================================== */
+        @keyframes screenFadeIn { 
+            from { opacity: 0; transform: translateY(16px) scale(0.99); } 
+            to { opacity: 1; transform: translateY(0) scale(1); } 
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes skeletonShimmer { 
+            0% { background-position: -200% 0; } 
+            100% { background-position: 200% 0; } 
+        }
+
+        @keyframes spinLogo { 
+            0% { transform: rotate(0deg) scale(1); } 
+            50% { transform: rotate(180deg) scale(0.85); border-radius: 50%; } 
+            100% { transform: rotate(360deg) scale(1); border-radius: var(--radius-md); } 
+        }
+
+        @keyframes pulseLogo { 
+            0% { transform: scale(0.85); opacity: 0.6; } 
+            100% { transform: scale(1.15); opacity: 1; } 
+        }
+
+        @keyframes adShimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes rippleEffect {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        @keyframes spinnerRotate {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            40% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Animation Utility Classes */
+        .anim-fade-up {
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Ripple Component */
+        .ripple-btn {
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0); /* Force hardware acceleration */
+        }
+        
+        .ripple-element {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: rippleEffect 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background-color: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        [data-theme="light"] .ripple-btn.invert-ripple .ripple-element {
+            background-color: rgba(0, 0, 0, 0.12);
+        }
+
+        .ripple-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Generic Circular Spinner */
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spinnerRotate 0.8s linear infinite;
+        }
+
+        .loading-spinner.primary {
+            border-color: var(--dyn-surface);
+            border-top-color: var(--dyn-primary);
+        }
+
+        /* ==========================================================================
+           4. SPLASH SCREEN & INITIAL LOADER
+           ========================================================================== */
+        #main-app-loader {
+            position: fixed; 
+            inset: 0; 
+            background: var(--bg); 
+            z-index: var(--z-loader);
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+        }
+
+        .animated-brand-logo { 
+            position: relative; 
+            width: 80px; 
+            height: 80px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+
+        .logo-shape-1 {
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            border: 8px solid var(--dyn-primary); 
+            border-radius: var(--radius-md);
+            animation: spinLogo 3s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+
+        .logo-shape-2 {
+            position: absolute; 
+            width: 45%; 
+            height: 45%; 
+            background: var(--text-main); 
+            border-radius: 50%;
+            animation: pulseLogo 1.5s ease-in-out infinite alternate;
+        }
+
+        /* ==========================================================================
+           5. SKELETON UI (UNIVERSAL LOADERS)
+           ========================================================================== */
+        .skeleton {
+            background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-shine) 50%, var(--skeleton-base) 75%);
+            background-size: 200% 100%; 
+            animation: skeletonShimmer 1.5s infinite linear; 
+            border-radius: var(--radius-xs);
+        }
+
+        .skel-cover { 
+            width: 100%; 
+            height: 100%; 
+            position: absolute; 
+            inset: 0; 
+            z-index: 1; 
+            border-radius: inherit; 
+        }
+
+        .skel-text { 
+            height: 16px; 
+            margin-bottom: 12px; 
+            width: 100%; 
+            border-radius: 6px; 
+        }
+
+        .skel-text.short { width: 40%; }
+        .skel-text.medium { width: 70%; }
+
+        .skel-title { 
+            height: 32px; 
+            margin-bottom: 16px; 
+            width: 80%; 
+            border-radius: 8px; 
+        }
+
+        .skel-avatar { 
+            width: 80px; 
+            height: 110px; 
+            border-radius: var(--radius-sm); 
+            flex-shrink: 0; 
+        }
+
+        .skel-row { 
+            display: flex; 
+            gap: 16px; 
+            padding: 16px 20px; 
+            border-bottom: 1px solid var(--border); 
+        }
+
+        .skel-row-content { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+        }
+
+        .skel-hero { 
+            width: 100%; 
+            height: 55vh; 
+            border-radius: 0; 
+        }
+
+        .skel-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 16px; 
+            margin-top: 24px; 
+        }
+
+        .skel-grid-box { 
+            height: 100px; 
+            border-radius: var(--radius-md); 
+        }
+
+        /* ==========================================================================
+           6. GLOBAL HEADER & NAVIGATION
+           ========================================================================== */
+        header { 
+            padding: calc(16px + env(safe-area-inset-top)) 20px 16px; 
+            position: sticky; 
+            top: 0; 
+            background: var(--glass-bg); 
+            backdrop-filter: var(--glass-blur); 
+            -webkit-backdrop-filter: var(--glass-blur);
+            z-index: var(--z-header); 
+            border-bottom: 1px solid var(--border); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        }
+
+        .header-brand { 
+            font-size: 38px; 
+            color: var(--text-main);
+            line-height: 1;
+            transform: translateY(2px);
+            user-select: none;
+        }
+
+        .header-profile-trigger {
+            width: 48px; 
+            height: 48px; 
+            border-radius: 50%; 
+            overflow: hidden;
+            background: var(--surface); 
+            cursor: pointer; 
+            border: 2px solid var(--border);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+
+        .header-profile-trigger:active { 
+            transform: scale(0.92); 
+        }
+
+        .header-profile-trigger img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: opacity 0.3s;
+        }
+
+        nav { 
+            position: fixed; 
+            bottom: 0; 
+            width: 100%; 
+            background: var(--glass-bg); 
+            backdrop-filter: var(--glass-blur); 
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-top: 1px solid var(--border); 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); 
+            z-index: var(--z-nav); 
+        }
+
+        .nav-tab { 
+            flex: 1; 
+            border: none; 
+            background: none; 
+            color: var(--text-sub); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 6px; 
+            font-size: 11px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: color 0.3s ease; 
+            position: relative;
+        }
+
+        .nav-tab.active { 
+            color: var(--dyn-primary); 
+        }
+
+        .nav-tab i { 
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+
+        .nav-tab.active i { 
+            transform: translateY(-2px) scale(1.15); 
+        }
+
+        /* Screen Controller */
+        .screen { 
+            display: none; 
+            padding-bottom: 120px; 
+            min-height: 100vh; 
+        }
+
+        .screen.active { 
+            display: block; 
+            animation: screenFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* ==========================================================================
+           7. BENZYTEN+ GUEST ADVERTISEMENTS
+           ========================================================================== */
+        .bz-ad-banner {
+            background: linear-gradient(135deg, var(--text-main) 0%, #333333 100%);
+            color: var(--bg); 
+            border-radius: var(--radius-lg); 
+            padding: 24px; 
+            margin: 20px;
+            position: relative; 
+            overflow: hidden; 
+            box-shadow: var(--shadow-md);
+            display: flex; 
+            flex-direction: column; 
+            align-items: flex-start; 
+            gap: 12px;
+        }
+
+        [data-theme="dark"] .bz-ad-banner {
+            background: linear-gradient(135deg, var(--text-main) 0%, #dddddd 100%);
+            color: var(--bg);
+        }
+
+        .bz-ad-banner::before {
+            content: ''; 
+            position: absolute; 
+            top: -50%; 
+            left: -50%; 
+            width: 200%; 
+            height: 200%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg); 
+            animation: adShimmer 3s infinite linear; 
+            pointer-events: none;
+        }
+
+        .bz-ad-badge { 
+            background: var(--dyn-primary); 
+            color: white; 
+            padding: 4px 12px; 
+            border-radius: var(--radius-xs); 
+            font-size: 10px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px;
+            box-shadow: 0 4px 12px var(--dyn-primary-glow);
+            z-index: 1;
+        }
+
+        .bz-ad-title { 
+            font-size: 24px; 
+            font-weight: 800; 
+            margin: 0; 
+            line-height: 1.2; 
+            z-index: 1;
+        }
+
+        .bz-ad-desc { 
+            font-size: 14px; 
+            font-weight: 600; 
+            opacity: 0.9; 
+            margin: 0; 
+            line-height: 1.5; 
+            z-index: 1;
+        }
+
+        .bz-ad-btn {
+            background: var(--bg); 
+            color: var(--text-main); 
+            border: none; 
+            padding: 12px 24px;
+            border-radius: var(--radius-pill); 
+            font-weight: 800; 
+            font-size: 14px; 
+            margin-top: 8px;
+            cursor: pointer; 
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1;
+        }
+
+        .bz-ad-btn:active { 
+            transform: scale(0.95); 
+        }
+
+        /* ==========================================================================
+           8. EXPLORE TAB & GLOBAL CHARTS
+           ========================================================================== */
+        .scroller-horizontal { 
+            display: flex; 
+            overflow-x: auto; 
+            gap: 20px; 
+            padding: 24px 20px; 
+            scroll-snap-type: x mandatory; 
+            scrollbar-width: none; 
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .scroller-horizontal::-webkit-scrollbar { 
+            display: none; 
+        }
+        
+        .hero-cover { 
+            min-width: 85vw; 
+            height: 480px; 
+            border-radius: var(--radius-xl); 
+            position: relative; 
+            overflow: hidden; 
+            scroll-snap-align: center; 
+            box-shadow: var(--shadow-lg); 
+            background: var(--surface); 
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
+        }
+
+        .hero-cover:active { 
+            transform: scale(0.96); 
+            box-shadow: var(--shadow-md);
+        }
+
+        .hero-cover img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0; 
+            transition: opacity 0.5s ease; 
+            position: relative; 
+            z-index: 2; 
+        }
+        
+        .hero-cover-overlay { 
+            position: absolute; 
+            inset: 0; 
+            z-index: 3; 
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 60%); 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: flex-end; 
+            padding: 32px; 
+        }
+
+        .hero-cover-overlay h2 { 
+            color: #ffffff; 
+            margin: 0 0 8px; 
+            font-size: 32px; 
+            font-weight: 800; 
+            line-height: 1.15; 
+            display: -webkit-box; 
+            -webkit-line-clamp: 3; 
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+        }
+
+        .hero-badge { 
+            display: inline-block; 
+            background: var(--dyn-primary); 
+            color: white; 
+            padding: 6px 12px; 
+            border-radius: var(--radius-xs); 
+            font-size: 12px; 
+            font-weight: 800; 
+            width: fit-content; 
+            margin-bottom: 12px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+        }
+
+        .section-title {
+            font-weight: 800; 
+            font-size: 24px; 
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        /* Generic List Items (Used in Charts & Search) */
+        .list-row { 
+            display: flex; 
+            align-items: center; 
+            gap: 16px; 
+            padding: 16px 20px; 
+            border-bottom: 1px solid var(--border); 
+            cursor: pointer; 
+            transition: background 0.2s ease; 
+        }
+
+        .list-row:active { 
+            background: var(--surface); 
+        }
+
+        .list-index { 
+            width: 44px; 
+            text-align: center; 
+            font-size: 32px; 
+            font-weight: 800; 
+            color: var(--text-main); 
+            opacity: 0.15; 
+            flex-shrink: 0; 
+            font-style: italic; 
+        }
+        
+        .list-thumb { 
+            width: 75px; 
+            height: 105px; 
+            border-radius: var(--radius-sm); 
+            object-fit: cover; 
+            background: var(--surface); 
+            position: relative; 
+            overflow: hidden; 
+            box-shadow: var(--shadow-sm); 
+            flex-shrink: 0;
+        }
+
+        .list-thumb img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0; 
+            transition: opacity 0.5s ease; 
+            position: relative; 
+            z-index: 2; 
+        }
+        
+        .list-meta { 
+            flex: 1; 
+            min-width: 0; /* Prevents flex overflow */
+        }
+
+        .list-meta h4 { 
+            margin: 0; 
+            font-size: 17px; 
+            font-weight: 700; 
+            color: var(--text-main); 
+            line-height: 1.3; 
+            display: -webkit-box; 
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+            word-break: break-word;
+        }
+
+        .list-meta p { 
+            margin: 8px 0 0; 
+            font-size: 13px; 
+            color: var(--text-sub); 
+            font-weight: 700; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            flex-wrap: wrap;
+        }
+
+        .list-meta-score { 
+            background: var(--text-main); 
+            color: var(--bg); 
+            padding: 4px 8px; 
+            border-radius: 6px; 
+            font-size: 11px; 
+            font-weight: 800; 
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ==========================================================================
+           9. ROBUST SEARCH ENGINE & FILTERS
+           ========================================================================== */
+        .search-area { 
+            padding: 20px; 
+            position: relative; 
+        }
+
+        .search-bar-wrap { 
+            background: var(--surface); 
+            border-radius: var(--radius-md); 
+            padding: 12px 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 16px; 
+            border: 2px solid transparent; 
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+
+        .search-bar-wrap:focus-within { 
+            border-color: var(--dyn-primary); 
+            box-shadow: 0 0 0 4px var(--dyn-primary-glow); 
+            background: var(--surface-elevated); 
+        }
+
+        .search-bar-wrap input { 
+            background: none; 
+            border: none; 
+            flex: 1; 
+            font-size: 17px; 
+            color: var(--text-main); 
+            font-weight: 600; 
+            width: 100%;
+        }
+
+        .search-bar-wrap input::placeholder {
+            color: var(--text-sub);
+            opacity: 0.7;
+        }
+        
+        .btn-search-fire { 
+            background: var(--dyn-primary); 
+            color: #fff; 
+            border: none; 
+            border-radius: var(--radius-sm); 
+            width: 48px; 
+            height: 48px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+            flex-shrink: 0;
+        }
+
+        .btn-search-fire.cooldown {
+            background: var(--surface-hover);
+            color: var(--text-sub);
+            cursor: not-allowed;
+            transform: scale(0.95);
+        }
+
+        .btn-search-fire:not(.cooldown):active { 
+            transform: scale(0.9); 
+        }
+
+        .search-quota-text { 
+            font-size: 11px; 
+            font-weight: 800; 
+            color: var(--dyn-primary); 
+            margin: 16px 0 0 4px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            transition: color 0.3s ease;
+        }
+
+        .filter-header { 
+            font-size: 14px; 
+            font-weight: 800; 
+            margin: 24px 0 12px; 
+            color: var(--text-sub); 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+
+        .filter-chip-row { 
+            display: flex; 
+            gap: 12px; 
+            overflow-x: auto; 
+            padding-bottom: 16px; 
+            scrollbar-width: none; 
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .filter-chip { 
+            background: var(--surface); 
+            padding: 12px 20px; 
+            border-radius: var(--radius-pill); 
+            font-size: 14px; 
+            font-weight: 700; 
+            color: var(--text-sub); 
+            border: 2px solid transparent; 
+            cursor: pointer; 
+            white-space: nowrap; 
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+
+        .filter-chip.active { 
+            border-color: var(--dyn-primary); 
+            color: var(--dyn-primary); 
+            background: var(--dyn-surface); 
+        }
+
+        /* ==========================================================================
+           10. DAILY ARTS & DIRECT DOWNLOAD SYSTEM
+           ========================================================================== */
+        .wp-header {
+            padding: 24px 20px 8px;
+        }
+
+        .wp-header h2 {
+            font-weight: 800; 
+            font-size: 32px; 
+            margin: 0 0 8px; 
+            line-height: 1.1;
+        }
+
+        .wp-header p {
+            font-size: 15px; 
+            color: var(--text-sub); 
+            font-weight: 600; 
+            margin: 0;
+        }
+
+        .wp-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 16px; 
+            padding: 16px 20px; 
+        }
+
+        .wp-item { 
+            position: relative; 
+            border-radius: var(--radius-lg); 
+            overflow: hidden; 
+            background: var(--surface); 
+            height: 280px; 
+            cursor: pointer; 
+            box-shadow: var(--shadow-md); 
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease; 
+        }
+
+        .wp-item:active { 
+            transform: scale(0.95); 
+            box-shadow: var(--shadow-sm);
+        }
+
+        .wp-item img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0; 
+            transition: opacity 0.5s ease; 
+        }
+        
+        .wp-overlay { 
+            position: absolute; 
+            inset: 0; 
+            background: rgba(0,0,0,0.3); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            opacity: 0; 
+            transition: opacity 0.3s ease, background 0.3s ease; 
+        }
+
+        .wp-item:hover .wp-overlay, .wp-item:active .wp-overlay { 
+            opacity: 1; 
+            background: rgba(0,0,0,0.5);
+        }
+
+        .wp-btn { 
+            background: rgba(255,255,255,0.2); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            color: white; 
+            padding: 12px 24px; 
+            border-radius: var(--radius-md); 
+            font-weight: 800; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 15px; 
+            border: 1px solid rgba(255,255,255,0.4); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Guest Locked State for Arts */
+        .wp-item.locked { 
+            filter: grayscale(100%); 
+        }
+
+        .wp-item.locked img { 
+            filter: blur(16px); 
+            transform: scale(1.1); /* Prevent blur bleeding edges */
+        }
+
+        .wp-item.locked .wp-overlay { 
+            opacity: 1; 
+            background: rgba(0,0,0,0.6); 
+            flex-direction: column; 
+            text-align: center; 
+            padding: 20px; 
+        }
+
+        .wp-lock-icon { 
+            color: white; 
+            margin-bottom: 12px; 
+        }
+
+        .wp-lock-text { 
+            color: white; 
+            font-weight: 800; 
+            font-size: 14px; 
+            letter-spacing: 0.5px;
+        }
+
+        /* ==========================================================================
+           11. MY LIST (LIBRARY SYSTEM)
+           ========================================================================== */
+        .list-tabs-row { 
+            display: flex; 
+            gap: 16px; 
+            padding: 16px 20px 24px; 
+        }
+
+        .list-tab-btn { 
+            flex: 1; 
+            padding: 14px; 
+            border-radius: var(--radius-md); 
+            font-weight: 800; 
+            font-size: 15px; 
+            background: var(--surface); 
+            color: var(--text-sub); 
+            border: none; 
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+            position: relative;
+            overflow: hidden;
+        }
+
+        .list-tab-btn.active { 
+            background: var(--text-main); 
+            color: var(--bg); 
+            box-shadow: var(--shadow-md); 
+        }
+        
+        .my-list-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 16px; 
+            padding: 0 20px; 
+        }
+
+        .my-list-card { 
+            position: relative; 
+            border-radius: var(--radius-md); 
+            overflow: hidden; 
+            height: 240px; 
+            box-shadow: var(--shadow-md); 
+            cursor: pointer; 
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            background: var(--surface);
+        }
+
+        .my-list-card:active {
+            transform: scale(0.95);
+        }
+
+        .my-list-card img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .my-list-overlay { 
+            position: absolute; 
+            inset: 0; 
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 60%); 
+            display: flex; 
+            align-items: flex-end; 
+            padding: 16px; 
+        }
+
+        .my-list-title { 
+            color: white; 
+            font-weight: 800; 
+            font-size: 14px; 
+            display: -webkit-box; 
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+            line-height: 1.3;
+        }
+
+        /* Empty & Locked States */
+        .empty-state-container {
+            grid-column: 1 / -1; 
+            text-align: center; 
+            padding: 60px 20px;
+        }
+
+        .empty-state-icon {
+            margin-bottom: 20px;
+            color: var(--text-sub);
+            opacity: 0.5;
+        }
+
+        .empty-state-title {
+            margin: 0 0 12px; 
+            font-weight: 800; 
+            font-size: 24px;
+            color: var(--text-main);
+        }
+
+        .empty-state-desc {
+            color: var(--text-sub); 
+            font-size: 15px; 
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* ==========================================================================
+           12. PROFILE & SETTINGS
+           ========================================================================== */
+        .profile-header { 
+            padding: 40px 20px 32px; 
+            text-align: center; 
+        }
+
+        .profile-avatar-wrap { 
+            width: 140px; 
+            height: 140px; 
+            background: var(--surface); 
+            border-radius: var(--radius-xl); 
+            margin: 0 auto 24px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            position: relative; 
+            box-shadow: var(--shadow-lg); 
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); 
+            border: 4px solid var(--border); 
+            overflow: hidden;
+        }
+
+        .profile-avatar-wrap:active {
+            transform: scale(0.94);
+        }
+
+        .profile-avatar-wrap img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            background: #eef2f5; /* Light fallback for transparent DiceBear SVGs */
+        }
+
+        [data-theme="dark"] .profile-avatar-wrap img {
+            background: #2a2a2a;
+        }
+
+        .plus-crown { 
+            position: absolute; 
+            top: -12px; 
+            right: -12px; 
+            background: var(--dyn-primary); 
+            color: white; 
+            padding: 8px 16px; 
+            border-radius: 14px; 
+            font-weight: 800; 
+            font-size: 13px; 
+            display: none; 
+            box-shadow: 0 6px 16px var(--dyn-primary-glow); 
+            z-index: 10; 
+        }
+        
+        .settings-card { 
+            background: var(--surface); 
+            padding: 24px; 
+            border-radius: var(--radius-xl); 
+            margin: 0 20px 20px; 
+            box-shadow: var(--shadow-sm);
+        }
+
+        .settings-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 24px; 
+        }
+
+        .settings-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .settings-label { 
+            font-weight: 700; 
+            font-size: 17px; 
+        }
+        
+        /* Custom Toggle Switch for Developer Mode & Theme */
+        .toggle-switch { 
+            position: relative; 
+            width: 60px; 
+            height: 34px; 
+            display: inline-block; 
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input { 
+            opacity: 0; 
+            width: 0; 
+            height: 0; 
+        }
+
+        .toggle-slider { 
+            position: absolute; 
+            cursor: pointer; 
+            top: 0; left: 0; right: 0; bottom: 0; 
+            background-color: var(--border-light); 
+            transition: .4s cubic-bezier(0.16, 1, 0.3, 1); 
+            border-radius: 34px; 
+            border: 2px solid var(--border);
+        }
+
+        .toggle-slider:before { 
+            position: absolute; 
+            content: ""; 
+            height: 26px; 
+            width: 26px; 
+            left: 2px; 
+            bottom: 2px; 
+            background-color: white; 
+            transition: .4s cubic-bezier(0.16, 1, 0.3, 1); 
+            border-radius: 50%; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+        }
+
+        input:checked + .toggle-slider { 
+            background-color: var(--dyn-primary); 
+            border-color: var(--dyn-primary);
+        }
+
+        input:checked + .toggle-slider:before { 
+            transform: translateX(26px); 
+        }
+
+        /* Custom Slider Input for UI Scale */
+        input[type="range"] { 
+            -webkit-appearance: none; 
+            width: 100%; 
+            height: 8px; 
+            background: var(--border); 
+            border-radius: 4px; 
+        }
+
+        input[type="range"]::-webkit-slider-thumb { 
+            -webkit-appearance: none; 
+            width: 28px; 
+            height: 28px; 
+            background: var(--text-main); 
+            border-radius: 50%; 
+            box-shadow: var(--shadow-sm); 
+            cursor: pointer; 
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:active {
+            transform: scale(1.15);
+        }
+
+        /* ==========================================================================
+           13. OVERHAULED DETAILED VIEW (MATERIAL STYLED)
+           ========================================================================== */
+        #detail-view { 
+            position: fixed; 
+            inset: 0; 
+            background: var(--bg); 
+            z-index: var(--z-modal); 
+            transform: translateX(100%); 
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+            overflow-y: auto; 
+            overflow-x: hidden;
+            display: none; 
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #detail-view.active { 
+            transform: translateX(0); 
+            display: block; 
+        }
+        
+        /* Floating Action Buttons (Back & Favorite) */
+        .btn-floating { 
+            position: fixed; 
+            z-index: 10; 
+            width: 52px; 
+            height: 52px; 
+            background: var(--glass-bg); 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            backdrop-filter: var(--glass-blur); 
+            -webkit-backdrop-filter: var(--glass-blur); 
+            box-shadow: var(--shadow-md); 
+            cursor: pointer; 
+            border: 1px solid var(--border); 
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease; 
+        }
+
+        .btn-floating:active { transform: scale(0.88); }
+        .btn-back { top: calc(20px + env(safe-area-inset-top)); left: 20px; }
+        .btn-fav { top: calc(20px + env(safe-area-inset-top)); right: 20px; }
+        
+        .btn-fav.is-saved { 
+            color: #ff2d55; 
+            background: rgba(255, 45, 85, 0.1); 
+            border-color: #ff2d55; 
+        }
+
+        .detail-hero-box { 
+            width: 100%; 
+            height: 55vh; 
+            position: relative; 
+            background: var(--surface); 
+        }
+
+        .detail-hero-box img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0; 
+            transition: opacity 0.6s ease; 
+            position: relative; 
+            z-index: 2; 
+        }
+
+        .hero-gradient { 
+            position: absolute; 
+            inset: 0; 
+            background: linear-gradient(to top, var(--bg) 0%, transparent 60%); 
+            z-index: 3; 
+        }
+
+        .detail-content { 
+            padding: 0 24px 120px; 
+            position: relative; 
+            z-index: 5; 
+            margin-top: -80px; 
+        }
+
+        /* Rectangular Material Rating Badge */
+        .rating-rect { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            background: var(--text-main); 
+            color: var(--bg); 
+            padding: 20px 24px; 
+            border-radius: var(--radius-lg); 
+            box-shadow: var(--shadow-lg); 
+            margin-bottom: 24px;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        .rating-score-big { 
+            font-size: 32px; 
+            font-weight: 800; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+
+        .rating-meta-small { text-align: right; }
+        
+        .rating-rank-lbl { 
+            font-size: 11px; 
+            font-weight: 700; 
+            opacity: 0.7; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            display: block; 
+        }
+
+        .rating-rank-val { 
+            font-size: 17px; 
+            font-weight: 800; 
+            display: block; 
+            margin-top: 4px; 
+        }
+
+        .detail-title { 
+            font-size: 36px; 
+            font-weight: 800; 
+            margin: 0 0 12px; 
+            line-height: 1.15; 
+            letter-spacing: -0.5px; 
+            word-wrap: break-word;
+        }
+
+        .detail-subtitle { 
+            color: var(--dyn-primary); 
+            font-weight: 800; 
+            margin: 0 0 24px; 
+            font-size: 15px; 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+            align-items: center; 
+            transition: color 0.4s ease;
+        }
+
+        .detail-dot { 
+            width: 5px; 
+            height: 5px; 
+            background: currentColor; 
+            border-radius: 50%; 
+            opacity: 0.5; 
+        }
+
+        /* Primary Action Buttons */
+        .detail-actions-row { 
+            display: flex; 
+            gap: 16px; 
+            margin-bottom: 32px; 
+        }
+
+        .btn-primary-action { 
+            flex: 1; 
+            background: var(--dyn-primary); 
+            color: white; 
+            border: none; 
+            padding: 16px; 
+            border-radius: var(--radius-md); 
+            font-weight: 800; 
+            font-size: 16px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            box-shadow: 0 8px 20px var(--dyn-primary-glow); 
+            cursor: pointer; 
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease; 
+        }
+
+        .btn-primary-action:active { transform: scale(0.96); }
+
+        .btn-secondary-action { 
+            flex: 1; 
+            background: var(--surface); 
+            color: var(--text-main); 
+            border: none; 
+            padding: 16px; 
+            border-radius: var(--radius-md); 
+            font-weight: 800; 
+            font-size: 16px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            cursor: pointer; 
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease; 
+        }
+
+        .btn-secondary-action:active { transform: scale(0.96); }
+
+        /* Production Data Grid */
+        .production-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 16px; 
+            margin: 32px 0; 
+        }
+
+        .prod-card { 
+            background: var(--surface); 
+            padding: 20px; 
+            border-radius: var(--radius-md); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            border: 2px solid transparent; 
+            transition: border 0.3s ease, transform 0.2s ease; 
+        }
+
+        .prod-card:hover { border-color: var(--dyn-surface); }
+        
+        .prod-icon { 
+            color: var(--dyn-primary); 
+            background: var(--dyn-primary-glow); 
+            padding: 10px; 
+            border-radius: 12px; 
+            width: fit-content; 
+            transition: color 0.4s ease, background 0.4s ease;
+        }
+
+        .prod-label { 
+            font-size: 12px; 
+            font-weight: 800; 
+            color: var(--text-sub); 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+
+        .prod-value { 
+            font-size: 15px; 
+            font-weight: 700; 
+            color: var(--text-main); 
+            line-height: 1.4; 
+        }
+
+        /* Synopsis Box */
+        .synopsis-shave { 
+            position: relative; 
+            overflow: hidden; 
+            line-height: 1.8; 
+            color: var(--text-sub); 
+            font-size: 15px; 
+            margin-bottom: 32px; 
+        }
+
+        .synopsis-shave.guest-mode { max-height: 180px; }
+
+        .synopsis-fade { 
+            position: absolute; 
+            bottom: 0; left: 0; right: 0; 
+            height: 120px; 
+            background: linear-gradient(transparent, var(--bg)); 
+            display: flex; 
+            align-items: flex-end; 
+            justify-content: center; 
+            padding-bottom: 8px; 
+        }
+
+        /* Generic Section Headers */
+        .section-header { 
+            margin: 40px 0 16px; 
+            font-weight: 800; 
+            font-size: 24px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            color: var(--text-main);
+        }
+
+        .section-header::before { 
+            content: ''; 
+            display: block; 
+            width: 6px; 
+            height: 24px; 
+            background: var(--dyn-primary); 
+            border-radius: 4px; 
+            transition: background 0.4s ease;
+        }
+
+        /* Trailer Container */
+        .trailer-container { 
+            width: 100%; 
+            border-radius: var(--radius-lg); 
+            overflow: hidden; 
+            aspect-ratio: 16/9; 
+            background: #000; 
+            box-shadow: var(--shadow-md); 
+            margin-bottom: 32px; 
+            position: relative; 
+        }
+
+        .trailer-container iframe { width: 100%; height: 100%; border: none; }
+        .no-trailer { display: flex; align-items: center; justify-content: center; height: 100%; color: #fff; font-weight: 700; flex-direction: column; gap: 12px; opacity: 0.6; }
+
+        /* Streaming Pills Engine */
+        .streaming-scroll { 
+            display: flex; 
+            gap: 12px; 
+            overflow-x: auto; 
+            padding-bottom: 16px; 
+            scrollbar-width: none; 
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .stream-pill { 
+            background: var(--surface); 
+            color: var(--text-main); 
+            padding: 14px 24px; 
+            border-radius: var(--radius-pill); 
+            font-weight: 800; 
+            font-size: 14px; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            white-space: nowrap; 
+            border: 2px solid transparent; 
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s, border 0.2s; 
+            cursor: pointer;
+        }
+
+        .stream-pill:active { 
+            transform: scale(0.95); 
+        }
+
+        /* Streaming Brand Colors */
+        .stream-netflix { color: #E50914; background: rgba(229, 9, 20, 0.1); border-color: rgba(229, 9, 20, 0.2); }
+        .stream-crunchyroll { color: #F47521; background: rgba(244, 117, 33, 0.1); border-color: rgba(244, 117, 33, 0.2); }
+        .stream-hulu { color: #1CE783; background: rgba(28, 231, 131, 0.1); border-color: rgba(28, 231, 131, 0.2); }
+        .stream-prime { color: #00A8E1; background: rgba(0, 168, 225, 0.1); border-color: rgba(0, 168, 225, 0.2); }
+        .stream-funimation { color: #410099; background: rgba(65, 0, 153, 0.1); border-color: rgba(65, 0, 153, 0.2); }
+        
+        [data-theme="dark"] .stream-funimation { color: #a15fff; background: rgba(161, 95, 255, 0.15); }
+
+        /* Characters Scroll */
+        .characters-scroll { 
+            display: flex; 
+            gap: 16px; 
+            overflow-x: auto; 
+            padding-bottom: 16px; 
+            scrollbar-width: none; 
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .character-card { 
+            min-width: 104px; 
+            max-width: 104px; 
+            text-align: center; 
+        }
+        
+        .character-card img { 
+            width: 88px; 
+            height: 88px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            margin: 0 auto 12px; 
+            border: 4px solid var(--surface); 
+            box-shadow: var(--shadow-sm); 
+            transition: transform 0.2s ease;
+        }
+
+        .char-name { 
+            display: block; 
+            font-size: 13px; 
+            font-weight: 800; 
+            color: var(--text-main); 
+            line-height: 1.2; 
+            text-overflow: ellipsis; 
+            overflow: hidden; 
+            white-space: nowrap; 
+        }
+
+        .char-role { 
+            display: block; 
+            font-size: 10px; 
+            font-weight: 700; 
+            color: var(--text-sub); 
+            text-transform: uppercase; 
+            margin-top: 4px; 
+            letter-spacing: 0.5px;
+        }
+
+        /* Themes (Openings/Endings) Section */
+        .theme-box {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theme-icon {
+            color: var(--dyn-primary);
+            background: var(--dyn-primary-glow);
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* ==========================================================================
+           14. MODALS, DIALOGS & TOAST NOTIFICATIONS
+           ========================================================================== */
+        .modal-overlay { 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.7); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+            z-index: var(--z-modal); 
+            display: none; 
+            align-items: center; 
+            justify-content: center; 
+        }
+
+        .modal-box { 
+            background: var(--bg); 
+            border-radius: var(--radius-xl); 
+            padding: 40px 32px; 
+            width: 85%; 
+            max-width: 420px; 
+            text-align: center; 
+            box-shadow: var(--shadow-xl); 
+            transform: scale(0.9); 
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease; 
+        }
+
+        .modal-box.active { 
+            transform: scale(1); 
+            opacity: 1; 
+        }
+        
+        .modal-icon { 
+            width: 80px; 
+            height: 80px; 
+            background: var(--dyn-primary-glow); 
+            color: var(--dyn-primary); 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0 auto 24px; 
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        .modal-btns { 
+            display: flex; 
+            gap: 16px; 
+            margin-top: 32px; 
+        }
+        
+        .btn-modal { 
+            flex: 1; 
+            padding: 16px; 
+            border-radius: var(--radius-md); 
+            font-weight: 800; 
+            cursor: pointer; 
+            border: none; 
+            font-size: 16px; 
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+
+        .btn-modal:active { transform: scale(0.95); }
+        .btn-cancel { background: var(--surface); color: var(--text-main); }
+        .btn-confirm { background: var(--dyn-primary); color: #fff; box-shadow: 0 8px 20px var(--dyn-primary-glow); transition: background 0.4s ease; }
+
+        /* Advanced Dynamic Toast Notification */
+        #toast-container { 
+            position: fixed; 
+            top: calc(24px + env(safe-area-inset-top)); 
+            left: 50%; 
+            transform: translateX(-50%) translateY(-100px); 
+            background: var(--text-main); 
+            color: var(--bg); 
+            padding: 16px 24px; 
+            border-radius: var(--radius-pill); 
+            font-weight: 800; 
+            font-size: 15px; 
+            z-index: var(--z-toast); 
+            box-shadow: var(--shadow-lg); 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease; 
+            opacity: 0; 
+            pointer-events: none;
+            max-width: 90vw;
+            white-space: nowrap;
+        }
+
+        #toast-container.show { 
+            transform: translateX(-50%) translateY(0); 
+            opacity: 1; 
+        }
+
+        #toast-container.error { background: var(--error-red); color: white; }
+        #toast-container.success { background: var(--success-green); color: white; }
+        #toast-container.warning { background: var(--warning-orange); color: white; }
+        #toast-container.cooldown { background: var(--surface-hover); color: var(--text-main); border: 1px solid var(--border); }
+
+    </style>
+</head>
+<body data-theme="light">
+
+    <canvas id="theme-canvas" style="display:none;"></canvas>
+
+    <div id="main-app-loader">
+        <div class="animated-brand-logo">
+            <div class="logo-shape-1"></div>
+            <div class="logo-shape-2"></div>
+        </div>
+    </div>
+
+    <div id="toast-container">
+        <i data-lucide="info" size="20" id="toast-icon"></i> 
+        <span id="toast-msg">System Notification</span>
+    </div>
+
+    <div id="download-modal" class="modal-overlay">
+        <div class="modal-box" id="dl-modal-inner">
+            <div class="modal-icon"><i data-lucide="download-cloud" size="36"></i></div>
+            <h2 style="margin: 0 0 12px; font-weight: 800;">Direct Download</h2>
+            <p style="color: var(--text-sub); font-weight: 500; font-size: 15px; margin: 0 0 20px; line-height: 1.6;">Fetch and download this high-resolution art directly to your local device?</p>
+            <div class="modal-btns">
+                <button class="btn-modal btn-cancel ripple-btn invert-ripple" onclick="closeModal('download-modal', 'dl-modal-inner')">Cancel</button>
+                <button class="btn-modal btn-confirm ripple-btn" id="btn-exec-download">Download</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="override-modal" class="modal-overlay">
+        <div class="modal-box" id="ov-modal-inner">
+            <div class="modal-icon"><i data-lucide="shield-check" size="36"></i></div>
+            <h2 style="margin: 0 0 12px; font-weight: 800;">System Override</h2>
+            <p style="color: var(--text-sub); font-weight: 500; font-size: 15px; margin: 0 0 20px; line-height: 1.6;">Activate Benzyten+ Developer Mode? This unlocks Favorites, Watchlists, HD Arts, and bypasses all API rate limits.</p>
+            <div class="modal-btns">
+                <button class="btn-modal btn-cancel ripple-btn invert-ripple" onclick="closeModal('override-modal', 'ov-modal-inner')">Abort</button>
+                <button class="btn-modal btn-confirm ripple-btn" onclick="executeProOverride()">Activate</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pro-gate-modal" class="modal-overlay">
+        <div class="modal-box" id="pg-modal-inner">
+            <div class="modal-icon" style="background: var(--error-bg); color: var(--error-red);">
+                <i data-lucide="lock" size="36"></i>
+            </div>
+            <h2 style="margin: 0 0 12px; font-weight: 800;">Pro Feature Locked</h2>
+            <p style="color: var(--text-sub); font-weight: 500; font-size: 15px; margin: 0 0 20px; line-height: 1.6;">This action is restricted to Benzyten+ members. Expand the database limits to proceed.</p>
+            <div class="modal-btns">
+                <button class="btn-modal btn-cancel ripple-btn invert-ripple" onclick="closeModal('pro-gate-modal', 'pg-modal-inner')">Dismiss</button>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-brand font-signature">Benzyten</div>
+        <div class="header-profile-trigger" onclick="switchAppTab('profile', document.getElementById('nav-profile'))">
+            <img class="dicebear-avatar-img" src="" alt="Profile">
+        </div>
+    </header>
+
+    <div id="explore" class="screen active">
+        <div class="scroller-horizontal" id="explore-featured"></div>
+        <div id="explore-ad-container"></div>
+        <section style="padding: 24px 20px;">
+            <h2 class="section-title">Trending Globally</h2>
+            <div id="explore-charts"></div>
+        </section>
+    </div>
+
+    <div id="search" class="screen">
+        <div class="search-area">
+            <div class="search-bar-wrap">
+                <i data-lucide="search" size="22" color="var(--text-sub)"></i>
+                <input type="text" id="main-search-input" placeholder="Search the archives...">
+                <button class="btn-search-fire ripple-btn" id="btn-fire-search">
+                    <i data-lucide="arrow-right" size="20" id="btn-fire-icon"></i>
+                </button>
+            </div>
+            
+            <div class="search-quota-text" id="search-quota-display">Remaining: 5 searches</div>
+            <div id="search-predictions" class="prediction-box"></div>
+
+            <div class="filter-header">Status</div>
+            <div class="filter-chip-row">
+                <div class="filter-chip active ripple-btn invert-ripple" data-group="status" data-val="airing" onclick="setSearchFilter(this)">Airing</div>
+                <div class="filter-chip ripple-btn invert-ripple" data-group="status" data-val="complete" onclick="setSearchFilter(this)">Completed</div>
+                <div class="filter-chip ripple-btn invert-ripple" data-group="status" data-val="upcoming" onclick="setSearchFilter(this)">Upcoming</div>
+            </div>
+
+            <div class="filter-header">Sort By Score</div>
+            <div class="filter-chip-row">
+                <div class="filter-chip active ripple-btn invert-ripple" data-group="sort" data-val="desc" onclick="setSearchFilter(this)">Highest First</div>
+                <div class="filter-chip ripple-btn invert-ripple" data-group="sort" data-val="asc" onclick="setSearchFilter(this)">Lowest First</div>
+            </div>
+
+            <div id="search-results-list" style="margin-top:24px;"></div>
+        </div>
+    </div>
+
+    <div id="wallpapers" class="screen">
+        <div class="wp-header">
+            <h2>Daily Arts</h2>
+            <p>High-res anime art. Fetched daily.</p>
+        </div>
+        <div class="wp-grid" id="wp-grid-container"></div>
+    </div>
+
+    <div id="mylist" class="screen">
+        <div class="wp-header">
+            <h2>My Library</h2>
+            <p>Your local offline collection.</p>
+        </div>
+        <div class="list-tabs-row">
+            <button class="list-tab-btn active ripple-btn invert-ripple" id="btn-tab-fav" onclick="switchLibraryTab('favorites')">Favorites</button>
+            <button class="list-tab-btn ripple-btn invert-ripple" id="btn-tab-watch" onclick="switchLibraryTab('watchlist')">Watchlist</button>
+        </div>
+        <div class="my-list-grid" id="library-grid-container">
+            </div>
+    </div>
+
+    <div id="profile" class="screen">
+        <div class="profile-header">
+            <div class="profile-avatar-wrap" id="easter-egg-trigger">
+                <img class="dicebear-avatar-img" src="" alt="Avatar">
+                <div class="plus-crown" id="plus-crown-ui">PRO</div>
+            </div>
+            <h2 id="profile-name-ui" style="margin:0; font-size:28px; font-weight:800;">Guest Profiler</h2>
+            <p style="font-size:14px; color:var(--text-sub); font-weight:600; margin-top:8px;">Local session active.</p>
+        </div>
+
+        <div id="dev-mode-section" style="display:none; animation: slideUpFade 0.5s ease;">
+            <div class="settings-card" style="border: 2px solid var(--dyn-primary); background: var(--dyn-surface);">
+                <div class="settings-row" style="margin-bottom:0;">
+                    <div>
+                        <span class="settings-label" style="color: var(--dyn-primary);">Developer Mode</span>
+                        <p style="font-size: 13px; color: var(--text-sub); margin-top: 6px; font-weight: 600;">Toggle Benzyten+ constraint limits.</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="pro-toggle-switch" onchange="handleProToggleSwitch(this)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="settings-card anim-fade-up" style="animation-delay: 0.1s;">
+            <div class="settings-row">
+                <span class="settings-label">Dark Mode</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="theme-toggle" onchange="toggleAppTheme()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div style="margin-bottom:16px;"><span class="settings-label">Interface Scale</span></div>
+            <input type="range" min="14" max="22" value="16" oninput="rescaleAppUI(this.value)">
+        </div>
+
+        <div style="text-align:center; padding:24px; opacity:0.5; animation: slideUpFade 0.5s ease 0.2s both;">
+            <p style="font-size:12px; font-weight:600; line-height:1.8;">
+                Engine Matrix v5.0 Master Build<br>
+                Jikan (MAL) / Nekos.best API<br>
+                DiceBear Avatars / Material DOM Extractor<br>
+                Rendered securely on local thread.
+            </p>
+        </div>
+    </div>
+
+    <div id="detail-view">
+        <div class="btn-floating btn-back ripple-btn invert-ripple" onclick="closeAnimeDetail()">
+            <i data-lucide="arrow-left" size="24"></i>
+        </div>
+        <div class="btn-floating btn-fav ripple-btn invert-ripple" id="detail-btn-fav" onclick="handleFavoriteClick()">
+            <i data-lucide="heart" size="24" id="detail-icon-fav"></i>
+        </div>
+        
+        <div id="detail-injection-container">
+            </div>
+    </div>
+
+    <nav>
+        <button class="nav-tab active ripple-btn invert-ripple" onclick="switchAppTab('explore', this)">
+            <i data-lucide="compass" size="24"></i>Explore
+        </button>
+        <button class="nav-tab ripple-btn invert-ripple" onclick="switchAppTab('search', this)">
+            <i data-lucide="search" size="24"></i>Search
+        </button>
+        <button class="nav-tab ripple-btn invert-ripple" onclick="switchAppTab('wallpapers', this); loadDailyArts();">
+            <i data-lucide="image" size="24"></i>Arts
+        </button>
+        <button class="nav-tab ripple-btn invert-ripple" onclick="switchAppTab('mylist', this); renderLibrary();">
+            <i data-lucide="bookmark" size="24"></i>My List
+        </button>
+        <button class="nav-tab ripple-btn invert-ripple" id="nav-profile" onclick="switchAppTab('profile', this)">
+            <i data-lucide="settings" size="24"></i>Settings
+        </button>
+    </nav>
+
+    <script>
+        /**
+         * Initialize Vector Graphics on DOM Content Loaded
+         * Lucide creates crisp SVGs dynamically.
+         */
+        lucide.createIcons();
+
+        // --------------------------------------------------------------------------
+        // 1. STATE MANAGEMENT & STORAGE CONTROLLER
+        // --------------------------------------------------------------------------
+        /**
+         * Centralized Application State
+         * Holds runtime configurations, quota trackers, caching objects, and flags.
+         */
+        const APP_STATE = {
+            isPro: localStorage.getItem('benzy_is_pro') === 'true',
+            devModeUnlocked: localStorage.getItem('benzy_dev_unlocked') === 'true',
+            searchLimit: 5, // Strict 5 searches per day for guests
+            activeFilters: { status: 'airing', sort: 'desc' },
+            apiHistory: [], // Used for Token Bucket Rate Limiting verification
+            pendingDownloadUrl: "",
+            currentDetailId: null,
+            currentDetailObj: null, // Structured object cached to save to Library
+            library: {
+                favorites: JSON.parse(localStorage.getItem('benzy_favs') || '[]'),
+                watchlist: JSON.parse(localStorage.getItem('benzy_watch') || '[]')
+            }
+        };
+
+        /**
+         * Persists the reactive library object natively into LocalStorage.
+         */
+        const saveLibrary = () => {
+            try {
+                localStorage.setItem('benzy_favs', JSON.stringify(APP_STATE.library.favorites));
+                localStorage.setItem('benzy_watch', JSON.stringify(APP_STATE.library.watchlist));
+            } catch (e) {
+                console.error("Storage Exception:", e);
+                showToast("Storage quota exceeded on device.", "error");
+            }
+        };
+
+        /**
+         * Synchronize Daily Search Quota for Guests
+         * Calculates timestamp resets at midnight local time.
+         */
+        const syncDailyQuota = () => {
+            const todayStamp = new Date().setHours(0,0,0,0);
+            let savedReset = parseInt(localStorage.getItem('benzy_reset_stamp') || '0');
+            
+            // If the saved timestamp is older than today's midnight, reset quota.
+            if (savedReset < todayStamp) {
+                localStorage.setItem('benzy_search_quota', '5');
+                localStorage.setItem('benzy_reset_stamp', todayStamp.toString());
+            }
+            
+            APP_STATE.searchLimit = parseInt(localStorage.getItem('benzy_search_quota') || '5');
+            updateQuotaDisplay();
+        };
+
+        /**
+         * Update the UI string for Search Quota visually
+         */
+        const updateQuotaDisplay = () => {
+            const el = document.getElementById('search-quota-display');
+            if(APP_STATE.isPro) {
+                el.innerText = 'Benzyten+ Unlimited Searches';
+                el.style.color = 'var(--text-main)';
+            } else {
+                el.innerText = `Remaining Quota: ${APP_STATE.searchLimit} Searches`;
+                el.style.color = 'var(--dyn-primary)';
+            }
+        };
+
+        // --------------------------------------------------------------------------
+        // 2. ANIMATION UTILITIES (RIPPLE & OBSERVERS)
+        // --------------------------------------------------------------------------
+        /**
+         * Global event listener to attach ripple effects to interactive elements.
+         * Creates a dynamic span, calculates hypotenuse for coverage, and animates.
+         */
+        document.addEventListener('click', function(e) {
+            const target = e.target.closest('.ripple-btn');
+            if (!target) return;
+
+            const circle = document.createElement('span');
+            const diameter = Math.max(target.clientWidth, target.clientHeight) * 1.5; // Ensure full coverage
+            const radius = diameter / 2;
+
+            const rect = target.getBoundingClientRect();
+            
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${e.clientX - rect.left - radius}px`;
+            circle.style.top = `${e.clientY - rect.top - radius}px`;
+            circle.classList.add('ripple-element');
+
+            // Cleanup previous fast ripples to prevent DOM bloat
+            const existingRipple = target.querySelector('.ripple-element');
+            if (existingRipple) {
+                existingRipple.remove();
+            }
+
+            target.appendChild(circle);
+            
+            // Clean up the DOM node after animation sequence completes
+            setTimeout(() => {
+                circle.remove();
+            }, 600);
+        });
+
+        /**
+         * Intersection Observer for slick scroll reveals within Detailed View.
+         * Improves performance by only animating elements when entering viewport.
+         */
+        const initScrollObserver = () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -50px 0px', // Trigger slightly before it comes into view
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.scroll-reveal').forEach(el => {
+                observer.observe(el);
+            });
+        };
+
+        // --------------------------------------------------------------------------
+        // 3. DICEBEAR AVATAR GENERATION
+        // --------------------------------------------------------------------------
+        /**
+         * Generates a persistent unique seed for the user to fetch a custom Avatar.
+         */
+        const initDiceBearAvatar = () => {
+            let seed = localStorage.getItem('bz_avatar_seed');
+            if (!seed) {
+                seed = Math.random().toString(36).substring(7);
+                localStorage.setItem('bz_avatar_seed', seed);
+            }
+            // Using Notionists style with pastel background colors
+            const url = `https://api.dicebear.com/9.x/notionists/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9`;
+            document.querySelectorAll('.dicebear-avatar-img').forEach(img => {
+                img.src = url;
+            });
+        };
+
+        // --------------------------------------------------------------------------
+        // 4. UI CONTROLLERS & TOASTS
+        // --------------------------------------------------------------------------
+        /**
+         * Displays a sleek dynamic Toast Notification at the top of the screen.
+         * @param {string} msg - The message to display.
+         * @param {string} type - 'info', 'success', 'warning', 'error', 'cooldown'.
+         */
+        const showToast = (msg, type = 'info') => {
+            const t = document.getElementById('toast-container');
+            const icon = document.getElementById('toast-icon');
+            document.getElementById('toast-msg').innerText = msg;
+            
+            // Reset state
+            t.className = ''; 
+            t.classList.add(type);
+            
+            // Map icons based on type
+            if (type === 'error') icon.setAttribute('data-lucide', 'alert-circle');
+            else if (type === 'success') icon.setAttribute('data-lucide', 'check-circle');
+            else if (type === 'warning') icon.setAttribute('data-lucide', 'alert-triangle');
+            else if (type === 'cooldown') icon.setAttribute('data-lucide', 'clock');
+            else icon.setAttribute('data-lucide', 'info');
+            lucide.createIcons();
+
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        };
+
+        /**
+         * Opens a Modal dialog with a scale-in animation.
+         */
+        const openModal = (bgId, innerId) => {
+            document.getElementById(bgId).style.display = 'flex';
+            // Slight delay allows display flex to render before scale transition
+            setTimeout(() => document.getElementById(innerId).classList.add('active'), 10);
+        };
+
+        /**
+         * Closes a Modal dialog with animation.
+         */
+        const closeModal = (bgId, innerId) => {
+            document.getElementById(innerId).classList.remove('active');
+            setTimeout(() => document.getElementById(bgId).style.display = 'none', 400);
+        };
+
+        /**
+         * Handles primary Bottom Navigation tab switching.
+         */
+        const switchAppTab = (screenId, btnElement) => {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            btnElement.classList.add('active');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        };
+
+        /**
+         * Toggles Global Dark/Light mode by altering the DOM attribute.
+         */
+        const toggleAppTheme = () => { 
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const themeToggle = document.getElementById('theme-toggle');
+            const metaTheme = document.getElementById('meta-theme-color');
+            
+            if(currentTheme === 'dark') {
+                body.setAttribute('data-theme', 'light');
+                if(themeToggle) themeToggle.checked = false;
+                if(metaTheme) metaTheme.setAttribute('content', '#ffffff');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                if(themeToggle) themeToggle.checked = true;
+                if(metaTheme) metaTheme.setAttribute('content', '#000000');
+            }
+        };
+
+        /**
+         * Adjusts the CSS variable to scale up/down the typography globally.
+         */
+        const rescaleAppUI = (val) => { 
+            document.documentElement.style.setProperty('--base-size', val + 'px'); 
+        };
+
+        // --------------------------------------------------------------------------
+        // 5. BENZYTEN+ ADVERTISEMENT GENERATOR
+        // --------------------------------------------------------------------------
+        /**
+         * Returns an HTML string for the promotional Banner for Guest Users.
+         */
+        const getAdBannerHTML = () => {
+            return `
+                <div class="bz-ad-banner anim-fade-up">
+                    <span class="bz-ad-badge">Benzyten+</span>
+                    <h4 class="bz-ad-title">Unlock the Archives</h4>
+                    <p class="bz-ad-desc">Remove search limits, unlock full casting, and get access to your local Watchlist library.</p>
+                    <button class="bz-ad-btn ripple-btn" onclick="document.getElementById('easter-egg-trigger').click()">Unlock Now</button>
+                </div>
+            `;
+        };
+
+        // --------------------------------------------------------------------------
+        // 6. MATERIAL YOU DYNAMIC COLOR EXTRACTOR
+        // --------------------------------------------------------------------------
+        const fallbackColors = ['#007aff', '#ff2d55', '#ff9500', '#34c759', '#af52de', '#ffcc00', '#5856d6'];
+
+        /**
+         * Resets the application's primary color to the default system Blue.
+         */
+        const resetTheme = () => {
+            document.documentElement.style.setProperty('--dyn-primary', '#007aff');
+            document.documentElement.style.setProperty('--dyn-primary-glow', 'rgba(0, 122, 255, 0.15)');
+            document.documentElement.style.setProperty('--dyn-surface', 'rgba(0, 122, 255, 0.05)');
+            document.documentElement.style.setProperty('--dyn-text', '#007aff');
+        };
+
+        /**
+         * Extracts the dominant color from an Image URL using an invisible Canvas element.
+         * Adjusts CSS variables to theme the application based on the image cover.
+         */
+        const applyDynamicTheme = (imgUrl, titleStr) => {
+            const canvas = document.getElementById('theme-canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            
+            img.onload = () => {
+                try {
+                    canvas.width = img.width; 
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    
+                    const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                    let r = 0, g = 0, b = 0, count = 0;
+                    
+                    // Sample every 400th pixel for performance (fast dominant average)
+                    for (let i = 0; i < data.length; i += 400) {
+                        r += data[i]; 
+                        g += data[i+1]; 
+                        b += data[i+2]; 
+                        count++;
+                    }
+                    
+                    r = Math.floor(r/count); 
+                    g = Math.floor(g/count); 
+                    b = Math.floor(b/count);
+                    
+                    const rgbStr = `${r}, ${g}, ${b}`;
+                    
+                    // Inject Dynamic Colors to CSS Root
+                    document.documentElement.style.setProperty('--dyn-primary', `rgb(${rgbStr})`);
+                    document.documentElement.style.setProperty('--dyn-primary-glow', `rgba(${rgbStr}, 0.25)`);
+                    document.documentElement.style.setProperty('--dyn-surface', `rgba(${rgbStr}, 0.1)`);
+                    document.documentElement.style.setProperty('--dyn-text', `rgb(${rgbStr})`);
+                } catch(e) { 
+                    // CORS Blocked -> Fallback gracefully
+                    applyHashTheme(titleStr); 
+                }
+            };
+            
+            img.onerror = () => applyHashTheme(titleStr);
+            img.src = imgUrl;
+        };
+
+        /**
+         * Generates a consistent hash color based on a string (Title) if Canvas fails.
+         */
+        const applyHashTheme = (str) => {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            
+            const hex = fallbackColors[Math.abs(hash) % fallbackColors.length];
+            let r = parseInt(hex.slice(1,3), 16), 
+                g = parseInt(hex.slice(3,5), 16), 
+                b = parseInt(hex.slice(5,7), 16);
+                
+            document.documentElement.style.setProperty('--dyn-primary', hex);
+            document.documentElement.style.setProperty('--dyn-primary-glow', `rgba(${r},${g},${b}, 0.25)`);
+            document.documentElement.style.setProperty('--dyn-surface', `rgba(${r},${g},${b}, 0.1)`);
+            document.documentElement.style.setProperty('--dyn-text', hex);
+        };
+
+        // --------------------------------------------------------------------------
+        // 7. RATE LIMITING & GUEST / PRO CONTROLLER
+        // --------------------------------------------------------------------------
+        /**
+         * Verifies the 2-Second Guest Limit via a Token Bucket system.
+         * Now features a gentle UI state change instead of a blocking alert.
+         */
+        const checkRateLimit = () => {
+            if (APP_STATE.isPro) return true; 
+            
+            const now = Date.now();
+            APP_STATE.apiHistory.push(now);
+            
+            if(APP_STATE.apiHistory.length > 2) {
+                APP_STATE.apiHistory.shift();
+            }
+            
+            // Guest 2-second cooldown logic
+            if(APP_STATE.apiHistory.length === 2 && (APP_STATE.apiHistory[1] - APP_STATE.apiHistory[0] < 2000)) {
+                // Trigger Gentle Cooldown UI
+                triggerGentleCooldownUI();
+                return false;
+            }
+            return true;
+        };
+
+        /**
+         * Manages the visual state of the Search button during a cooldown.
+         */
+        const triggerGentleCooldownUI = () => {
+            const btn = document.getElementById('btn-fire-search');
+            const icon = document.getElementById('btn-fire-icon');
+            
+            if (btn.classList.contains('cooldown')) return; // Already cooling down
+            
+            showToast("Cooling down engines... please wait 2s", "cooldown");
+            
+            // Set Cooldown state
+            btn.classList.add('cooldown');
+            btn.innerHTML = `<div class="loading-spinner"></div>`;
+            
+            setTimeout(() => {
+                btn.classList.remove('cooldown');
+                btn.innerHTML = `<i data-lucide="arrow-right" size="20" id="btn-fire-icon"></i>`;
+                lucide.createIcons();
+            }, 2000);
+        };
+
+        /**
+         * Checks the strict daily 5 search limit for Guests.
+         */
+        const checkSearchQuota = () => {
+            if (APP_STATE.isPro) return true;
+            if (APP_STATE.searchLimit <= 0) {
+                openModal('pro-gate-modal', 'pg-modal-inner');
+                return false;
+            }
+            return true;
+        };
+
+        /**
+         * Decrements local storage search limit.
+         */
+        const decrementSearchQuota = () => {
+            if(!APP_STATE.isPro) {
+                APP_STATE.searchLimit--;
+                localStorage.setItem('benzy_search_quota', APP_STATE.searchLimit);
+                updateQuotaDisplay();
+            }
+        };
+
+        /**
+         * Synchronizes User Interface elements (Avatars, Names, Badges) based on Pro state.
+         */
+        const syncProUIState = () => {
+            const crown = document.getElementById('plus-crown-ui');
+            const name = document.getElementById('profile-name-ui');
+            const devSection = document.getElementById('dev-mode-section');
+            const toggleSwitch = document.getElementById('pro-toggle-switch');
+
+            if(APP_STATE.devModeUnlocked) {
+                devSection.style.display = 'block';
+            }
+
+            if(APP_STATE.isPro) {
+                crown.style.display = 'block';
+                name.innerText = 'Benzyten+ Member';
+                if(toggleSwitch) toggleSwitch.checked = true;
+            } else {
+                crown.style.display = 'none';
+                name.innerText = 'Guest Profiler';
+                if(toggleSwitch) toggleSwitch.checked = false;
+            }
+            updateQuotaDisplay();
+        };
+
+        /**
+         * Activates Developer Mode globally.
+         */
+        const executeProOverride = () => {
+            localStorage.setItem('benzy_dev_unlocked', 'true');
+            localStorage.setItem('benzy_is_pro', 'true');
+            APP_STATE.devModeUnlocked = true;
+            APP_STATE.isPro = true;
+            syncProUIState();
+            closeModal('override-modal', 'ov-modal-inner');
+            showToast("Developer Mode Unlocked.", "success");
+            
+            // Hot Reload specific views to strip locks
+            switchAppTab('explore', document.querySelector('.nav-tab[onclick*="explore"]'));
+            bootApplication();
+        };
+
+        /**
+         * Handles manual toggling from the Setting's Menu.
+         */
+        const handleProToggleSwitch = (el) => {
+            const isActive = el.checked;
+            APP_STATE.isPro = isActive;
+            localStorage.setItem('benzy_is_pro', isActive ? 'true' : 'false');
+            syncProUIState();
+            showToast(isActive ? "Pro Mode Activated." : "Reverted to Guest Mode.", isActive ? 'success' : 'info');
+        };
+
+        // 5-Tap Hidden Developer Trigger
+        let tapCount = 0;
+        document.getElementById('easter-egg-trigger').addEventListener('click', () => {
+            if(APP_STATE.devModeUnlocked) return; // Ignore if already unlocked
+            tapCount++;
+            if(tapCount >= 5) {
+                tapCount = 0;
+                openModal('override-modal', 'ov-modal-inner');
+            }
+        });
+
+        // --------------------------------------------------------------------------
+        // 8. SKELETON UI COMPONENT GENERATORS
+        // --------------------------------------------------------------------------
+        const getListSkeletonHTML = () => {
+            return Array(5).fill(`
+                <div class="skel-row">
+                    <div class="skeleton skel-avatar"></div>
+                    <div class="skel-row-content">
+                        <div class="skeleton skel-title"></div>
+                        <div class="skeleton skel-text medium"></div>
+                        <div class="skeleton skel-text short"></div>
+                    </div>
+                </div>`).join('');
+        };
+
+        const getDetailSkeletonHTML = () => `
+            <div class="skeleton skel-hero"></div>
+            <div class="detail-content" style="padding: 40px 24px;">
+                <div class="skeleton skel-title" style="width:60%; height:40px;"></div>
+                <div class="skeleton skel-text short" style="margin-top:20px;"></div>
+                <div class="skel-grid">
+                    <div class="skeleton skel-grid-box"></div>
+                    <div class="skeleton skel-grid-box"></div>
+                </div>
+                <div class="skeleton skel-text" style="margin-top:40px;"></div>
+                <div class="skeleton skel-text"></div>
+                <div class="skeleton skel-text medium"></div>
+            </div>`;
+
+        // --------------------------------------------------------------------------
+        // 9. APPLICATION INITIALIZATION (EXPLORE TAB)
+        // --------------------------------------------------------------------------
+        const bootApplication = async () => {
+            syncDailyQuota();
+            initDiceBearAvatar();
+            syncProUIState();
+
+            if(!checkRateLimit()) return;
+
+            try {
+                // Fetch top trending from Jikan API
+                const result = await fetch('https://api.jikan.moe/v4/top/anime?limit=25').then(r=>r.json());
+                const rawList = result.data || [];
+                
+                // Pure randomisation for Featured Banner
+                const shuffled = [...rawList].sort(() => 0.5 - Math.random());
+
+                document.getElementById('explore-featured').innerHTML = shuffled.slice(0, 5).map((a, i) => `
+                    <div class="hero-cover anim-fade-up" style="animation-delay: ${i * 0.1}s" onclick="loadDetail(${a.mal_id})">
+                        <div class="skeleton skel-cover"></div>
+                        <img src="${a.images.jpg.large_image_url}" onload="this.style.opacity=1; this.previousElementSibling.remove()">
+                        <div class="hero-cover-overlay">
+                            <span class="hero-badge">${a.type}</span>
+                            <h2>${a.title}</h2>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Promotional Ad Injection (For Guests only)
+                const adContainer = document.getElementById('explore-ad-container');
+                if(!APP_STATE.isPro) {
+                    adContainer.innerHTML = getAdBannerHTML();
+                } else {
+                    adContainer.innerHTML = '';
+                }
+
+                // Global Charts List Rendering with Anim Delays
+                document.getElementById('explore-charts').innerHTML = rawList.map((a, index) => `
+                    <div class="list-row anim-fade-up ripple-btn invert-ripple" style="animation-delay: ${index * 0.05}s" onclick="loadDetail(${a.mal_id})">
+                        <div class="list-index">${(index+1).toString().padStart(2, '0')}</div>
+                        <div class="list-thumb">
+                            <div class="skeleton skel-cover"></div>
+                            <img src="${a.images.jpg.image_url}" onload="this.style.opacity=1; this.previousElementSibling.remove()">
+                        </div>
+                        <div class="list-meta">
+                            <h4>${a.title}</h4>
+                            <p>
+                                <span class="list-meta-score"><i data-lucide="star" size="10" fill="currentColor"></i> ${a.score || 'N/A'}</span> 
+                                <span>${a.members.toLocaleString()} Users</span>
+                            </p>
+                        </div>
+                    </div>
+                `).join('');
+                
+                lucide.createIcons();
+            } catch(e) { 
+                console.error("Boot Error", e); 
+            }
+
+            // Remove Loading Splash Screen Gracefully
+            setTimeout(() => {
+                const loader = document.getElementById('main-app-loader');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 600);
+            }, 1200);
+        };
+
+        // --------------------------------------------------------------------------
+        // 10. OVERHAULED MATERIAL DETAIL VIEW
+        // --------------------------------------------------------------------------
+        const closeAnimeDetail = () => {
+            const view = document.getElementById('detail-view');
+            view.classList.remove('active');
+            setTimeout(() => view.style.display = 'none', 500);
+            resetTheme();
+        };
+
+        /**
+         * Streaming Link Normalizer
+         * Matches streaming platform names to apply branded classes.
+         */
+        const getStreamBrandClass = (name) => {
+            const n = name.toLowerCase();
+            if(n.includes('netflix')) return 'stream-netflix';
+            if(n.includes('crunchyroll')) return 'stream-crunchyroll';
+            if(n.includes('hulu')) return 'stream-hulu';
+            if(n.includes('amazon') || n.includes('prime')) return 'stream-prime';
+            if(n.includes('funimation')) return 'stream-funimation';
+            return ''; // Default
+        };
+
+        /**
+         * Fetches massive amounts of JSON data and populates the robust Detail View.
+         * Integrates Jikan & Material DOM alterations.
+         */
+        const loadDetail = async (id) => {
+            if(!checkRateLimit()) return;
+            
+            const viewContainer = document.getElementById('detail-view');
+            const targetContainer = document.getElementById('detail-injection-container');
+            
+            APP_STATE.currentDetailId = id;
+            targetContainer.innerHTML = getDetailSkeletonHTML();
+            
+            viewContainer.style.display = 'block';
+            setTimeout(() => viewContainer.classList.add('active'), 10);
+
+            try {
+                // Fetch full anime data
+                const jRes = await fetch(`https://api.jikan.moe/v4/anime/${id}/full`).then(r=>r.json());
+                const a = jRes.data;
+                
+                if(!a) throw new Error("No data returned by API");
+
+                // Process Material Dynamic UI Generation
+                applyDynamicTheme(a.images.jpg.large_image_url, a.title);
+
+                // Build lightweight Cache object for Library
+                // Fix: explicit assignment of `image` property
+                APP_STATE.currentDetailObj = { 
+                    id: a.mal_id, 
+                    title: a.title, 
+                    image: a.images.jpg.large_image_url 
+                };
+                updateFavButtonState();
+
+                const isGuest = !APP_STATE.isPro;
+                const synClass = isGuest ? 'synopsis-shave guest-mode' : 'synopsis-shave';
+
+                // Trailer Embed Handler
+                let trailerHtml = '';
+                if(a.trailer && a.trailer.embed_url) {
+                    trailerHtml = `
+                        <h3 class="section-header scroll-reveal">Official Trailer</h3>
+                        <div class="trailer-container scroll-reveal">
+                            <iframe src="${a.trailer.embed_url}?autoplay=0&enablejsapi=1" allowfullscreen></iframe>
+                        </div>`;
+                }
+
+                // Streaming Services Embed (Guest Limited to 1)
+                // Fix: Added brand color parsing and valid href parsing
+                let streamHtml = '';
+                if(a.streaming && a.streaming.length > 0) {
+                    // Filter out invalid URLs
+                    const validStreams = a.streaming.filter(s => s.url && s.url.startsWith('http'));
+                    const limitStreams = isGuest ? validStreams.slice(0, 1) : validStreams;
+                    
+                    if(limitStreams.length > 0) {
+                        streamHtml = `
+                            <h3 class="section-header scroll-reveal">Where to Watch ${isGuest && validStreams.length > 1 ? '(Limited)' : ''}</h3>
+                            <div class="streaming-scroll scroll-reveal">
+                                ${limitStreams.map(s => {
+                                    const bClass = getStreamBrandClass(s.name);
+                                    return `
+                                    <a href="${s.url}" target="_blank" class="stream-pill ripple-btn invert-ripple ${bClass}">
+                                        <i data-lucide="play-circle" size="18" color="currentColor"></i> ${s.name}
+                                    </a>`;
+                                }).join('')}
+                                ${isGuest && validStreams.length > 1 ? `
+                                    <div class="stream-pill ripple-btn invert-ripple" onclick="openModal('pro-gate-modal', 'pg-modal-inner')">
+                                        <i data-lucide="lock" size="18"></i> Unlocks ${validStreams.length - 1} more
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }
+                }
+
+                // Theme Songs (Openings/Endings) expansion
+                let themesHtml = '';
+                if(a.theme && (a.theme.openings.length > 0 || a.theme.endings.length > 0)) {
+                    themesHtml = `<h3 class="section-header scroll-reveal">Soundtrack Themes</h3><div class="scroll-reveal">`;
+                    
+                    // Show max 2 openings and 1 ending to keep UI clean
+                    const ops = a.theme.openings.slice(0, 2);
+                    const eds = a.theme.endings.slice(0, 1);
+                    
+                    ops.forEach(op => {
+                        themesHtml += `
+                            <div class="theme-box">
+                                <div class="theme-icon"><i data-lucide="music" size="18"></i></div>
+                                <div><span style="font-size:10px; font-weight:800; color:var(--text-sub); text-transform:uppercase;">Opening</span><br>${op}</div>
+                            </div>`;
+                    });
+                    eds.forEach(ed => {
+                        themesHtml += `
+                            <div class="theme-box">
+                                <div class="theme-icon"><i data-lucide="headphones" size="18"></i></div>
+                                <div><span style="font-size:10px; font-weight:800; color:var(--text-sub); text-transform:uppercase;">Ending</span><br>${ed}</div>
+                            </div>`;
+                    });
+                    themesHtml += `</div>`;
+                }
+
+                // Promotional Banner
+                let adInjection = isGuest ? `<div class="scroll-reveal">${getAdBannerHTML()}</div>` : '';
+
+                // Generate Master DOM Payload
+                let html = `
+                    <div class="detail-hero-box">
+                        <div class="skeleton skel-cover"></div>
+                        <img src="${a.images.jpg.large_image_url}" onload="this.style.opacity=1; this.previousElementSibling.remove()">
+                        <div class="hero-gradient"></div>
+                    </div>
+                    
+                    <div class="detail-content">
+                        <div class="rating-rect anim-fade-up">
+                            <div>
+                                <span class="rating-rank-lbl">Global Rank</span>
+                                <span class="rating-rank-val">#${a.rank || 'N/A'}</span>
+                            </div>
+                            <div class="rating-score-big">
+                                <i data-lucide="star" fill="currentColor"></i> ${a.score || 'N/A'}
+                            </div>
+                            <div class="rating-meta-small">
+                                <span class="rating-rank-lbl">Popularity</span>
+                                <span class="rating-rank-val">#${a.popularity || 'N/A'}</span>
+                            </div>
+                        </div>
+
+                        <h1 class="detail-title anim-fade-up" style="animation-delay:0.1s">${a.title}</h1>
+                        <div class="detail-subtitle anim-fade-up" style="animation-delay:0.2s">
+                            <span>${a.type}</span> <span class="detail-dot"></span> 
+                            <span>${a.status}</span> <span class="detail-dot"></span> 
+                            <span>${a.year || 'Classic'}</span> <span class="detail-dot"></span>
+                            <span>${a.episodes || '?'} EPS</span>
+                        </div>
+                        
+                        <div class="detail-actions-row anim-fade-up" style="animation-delay:0.3s">
+                            <button class="btn-primary-action ripple-btn" onclick="handleWatchlistClick()">
+                                <i data-lucide="bookmark-plus"></i> Watchlist
+                            </button>
+                            <button class="btn-secondary-action ripple-btn invert-ripple" onclick="shareTitle('${a.title}')">
+                                <i data-lucide="share-2"></i> Share
+                            </button>
+                        </div>
+
+                        <div class="production-grid scroll-reveal">
+                            <div class="prod-card">
+                                <i data-lucide="video" size="24" class="prod-icon"></i>
+                                <div><span class="prod-label">Studio</span><br><span class="prod-value">${a.studios[0]?.name || 'Unknown'}</span></div>
+                            </div>
+                            <div class="prod-card">
+                                <i data-lucide="book-open" size="24" class="prod-icon"></i>
+                                <div><span class="prod-label">Source</span><br><span class="prod-value">${a.source || 'Original'}</span></div>
+                            </div>
+                            <div class="prod-card" style="grid-column: 1/-1; flex-direction:row; align-items:center;">
+                                <i data-lucide="tag" size="24" class="prod-icon"></i>
+                                <div style="flex:1"><span class="prod-label">Genres</span><br><span class="prod-value">${a.genres.map(g=>g.name).join(', ') || 'N/A'}</span></div>
+                            </div>
+                        </div>
+
+                        <h3 class="section-header scroll-reveal">Synopsis</h3>
+                        <div class="${synClass} scroll-reveal">
+                            <p style="margin:0;">${a.synopsis || "No data recorded in central databanks."}</p>
+                            ${isGuest ? `
+                                <div class="synopsis-fade">
+                                    <button onclick="openModal('pro-gate-modal', 'pg-modal-inner')" class="btn-primary-action ripple-btn" style="width:auto; padding:12px 30px; font-size:14px; box-shadow: 0 10px 20px rgba(0,0,0,0.2);">Unlock Full Synopsis</button>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        ${adInjection}
+                        ${trailerHtml}
+                        ${streamHtml}
+                        ${themesHtml}
+                        
+                        <div id="cast-injection-point"></div>
+                        <div id="recom-injection-point"></div>
+                    </div>
+                `;
+                
+                targetContainer.innerHTML = html;
+                lucide.createIcons();
+                initScrollObserver();
+
+                // Fetch Cast Characters as a separate async call to speed up perceived load time
+                fetch(`https://api.jikan.moe/v4/anime/${id}/characters`).then(r=>r.json()).then(cRes => {
+                    if(cRes.data) {
+                        // Strict Guest Constraints: Capped at 5 members
+                        const limit = isGuest ? 5 : 25;
+                        const castList = cRes.data.slice(0, limit);
+                        
+                        const lockHtml = isGuest && cRes.data.length > 5 
+                            ? `<div class="character-card" onclick="openModal('pro-gate-modal', 'pg-modal-inner')" style="cursor:pointer; opacity:0.7;">
+                                 <div style="width:88px; height:88px; border-radius:50%; background:var(--surface); display:flex; align-items:center; justify-content:center; margin:0 auto 12px; border: 4px solid var(--border);">
+                                    <i data-lucide="lock" size="24"></i>
+                                 </div>
+                                 <span class="char-name">Unlock</span>
+                               </div>` 
+                            : '';
+                        
+                        const castHtml = `
+                            <h3 class="section-header scroll-reveal">Voice Cast ${isGuest ? '(Limited)' : ''}</h3>
+                            <div class="characters-scroll scroll-reveal">
+                                ${castList.map(c => `
+                                    <div class="character-card">
+                                        <img src="${c.character.images.jpg.image_url}" onerror="this.src='https://via.placeholder.com/88?text=N/A'">
+                                        <span class="char-name">${c.character.name}</span>
+                                        <span class="char-role">${c.role}</span>
+                                    </div>
+                                `).join('')}
+                                ${lockHtml}
+                            </div>
+                        `;
+                        const ci = document.getElementById('cast-injection-point');
+                        if(ci) { 
+                            ci.innerHTML = castHtml; 
+                            lucide.createIcons(); 
+                            initScrollObserver();
+                        }
+                    }
+                });
+
+                // Fetch Recommendations (Bonus Data)
+                fetch(`https://api.jikan.moe/v4/anime/${id}/recommendations`).then(r=>r.json()).then(rRes => {
+                    if(rRes.data && rRes.data.length > 0) {
+                        const recs = rRes.data.slice(0, 5);
+                        const recsHtml = `
+                            <h3 class="section-header scroll-reveal">More Like This</h3>
+                            <div class="scroller-horizontal scroll-reveal" style="padding: 10px 0;">
+                                ${recs.map(r => `
+                                    <div class="list-thumb ripple-btn invert-ripple" style="width: 100px; height: 140px; cursor:pointer; flex-shrink:0;" onclick="loadDetail(${r.entry.mal_id})">
+                                        <img src="${r.entry.images.jpg.image_url}" style="opacity:1;">
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        const ri = document.getElementById('recom-injection-point');
+                        if(ri) {
+                            ri.innerHTML = recsHtml;
+                            initScrollObserver();
+                        }
+                    }
+                });
+
+            } catch(e) {
+                targetContainer.innerHTML = `
+                    <div style="padding:100px 20px; text-align:center;">
+                        <i data-lucide="wifi-off" size="48" color="var(--error-red)"></i>
+                        <p style="margin-top:16px; font-weight:800; font-size: 18px;">Secure transmission failed.</p>
+                        <p style="color:var(--text-sub); font-size:14px;">The central databanks could not be reached.</p>
+                    </div>`;
+                lucide.createIcons();
+            }
+        };
+
+        /**
+         * System API Share Trigger
+         */
+        const shareTitle = (title) => {
+            if (navigator.share) {
+                navigator.share({ 
+                    title: `Check out ${title} on Benzyten`, 
+                    url: window.location.href 
+                });
+            } else {
+                showToast("Share API not supported on this device.", "warning");
+            }
+        };
+
+        // --------------------------------------------------------------------------
+        // 11. LIBRARY MANAGEMENT (FAV & WATCHLIST)
+        // --------------------------------------------------------------------------
+        const isSaved = (type, id) => APP_STATE.library[type].some(item => item.id === id);
+
+        const updateFavButtonState = () => {
+            const btn = document.getElementById('detail-btn-fav');
+            const icon = document.getElementById('detail-icon-fav');
+            if(!btn || !APP_STATE.currentDetailId) return;
+            
+            if(isSaved('favorites', APP_STATE.currentDetailId)) {
+                btn.classList.add('is-saved');
+                icon.setAttribute('fill', 'currentColor');
+            } else {
+                btn.classList.remove('is-saved');
+                icon.setAttribute('fill', 'none');
+            }
+            lucide.createIcons();
+        };
+
+        const handleFavoriteClick = () => {
+            if(!APP_STATE.isPro) { openModal('pro-gate-modal', 'pg-modal-inner'); return; }
+            if(!APP_STATE.currentDetailObj) return;
+
+            const id = APP_STATE.currentDetailObj.id;
+            if(isSaved('favorites', id)) {
+                APP_STATE.library.favorites = APP_STATE.library.favorites.filter(i => i.id !== id);
+                showToast("Removed from Favorites");
+            } else {
+                APP_STATE.library.favorites.push(APP_STATE.currentDetailObj);
+                showToast("Added to Favorites", "success");
+            }
+            saveLibrary();
+            updateFavButtonState();
+        };
+
+        const handleWatchlistClick = () => {
+            if(!APP_STATE.isPro) { openModal('pro-gate-modal', 'pg-modal-inner'); return; }
+            if(!APP_STATE.currentDetailObj) return;
+
+            const id = APP_STATE.currentDetailObj.id;
+            if(isSaved('watchlist', id)) {
+                APP_STATE.library.watchlist = APP_STATE.library.watchlist.filter(i => i.id !== id);
+                showToast("Removed from Watchlist");
+            } else {
+                APP_STATE.library.watchlist.push(APP_STATE.currentDetailObj);
+                showToast("Saved to Watchlist", "success");
+            }
+            saveLibrary();
+        };
+
+        let activeLibraryTab = 'favorites';
+        const switchLibraryTab = (tab) => {
+            activeLibraryTab = tab;
+            document.getElementById('btn-tab-fav').classList.toggle('active', tab === 'favorites');
+            document.getElementById('btn-tab-watch').classList.toggle('active', tab === 'watchlist');
+            renderLibrary();
+        };
+
+        /**
+         * Renders the local library. 
+         * Fix: Handles correct image paths and empty state fallbacks natively.
+         */
+        const renderLibrary = () => {
+            const container = document.getElementById('library-grid-container');
+            const list = APP_STATE.library[activeLibraryTab];
+            
+            // Guest Lock state
+            if(!APP_STATE.isPro) {
+                container.innerHTML = `
+                    <div class="empty-state-container anim-fade-up">
+                        <i data-lucide="lock" size="56" color="var(--dyn-primary)" class="empty-state-icon"></i>
+                        <h3 class="empty-state-title">Pro Feature</h3>
+                        <p class="empty-state-desc">Your local library is locked. Upgrade to Benzyten+ to save and organize your favorite titles.</p>
+                        <button class="btn-primary-action ripple-btn" style="margin: 24px auto 0;" onclick="openModal('override-modal', 'ov-modal-inner')">Developer Override</button>
+                    </div>`;
+                lucide.createIcons();
+                return;
+            }
+
+            // Empty State
+            if(list.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state-container anim-fade-up">
+                        <i data-lucide="folder-open" size="56" class="empty-state-icon"></i>
+                        <h3 class="empty-state-title">Library is empty.</h3>
+                        <p class="empty-state-desc">Titles you save will appear here.</p>
+                    </div>`;
+                lucide.createIcons();
+                return;
+            }
+
+            // Populate Grid
+            container.innerHTML = list.map((item, idx) => `
+                <div class="my-list-card anim-fade-up" style="animation-delay: ${idx * 0.05}s;" onclick="loadDetail(${item.id})">
+                    <img src="${item.image}" onload="this.style.opacity=1" onerror="this.src='https://via.placeholder.com/200x300?text=Cover+Missing'; this.style.opacity=1;">
+                    <div class="my-list-overlay">
+                        <span class="my-list-title">${item.title}</span>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        // --------------------------------------------------------------------------
+        // 12. SEARCH ENGINE, FILTERS & QUOTAS
+        // --------------------------------------------------------------------------
+        const setSearchFilter = (el) => {
+            const group = el.getAttribute('data-group');
+            const val = el.getAttribute('data-val');
+            APP_STATE.activeFilters[group] = val;
+            
+            document.querySelectorAll(`.filter-chip[data-group="${group}"]`).forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+        };
+
+        const executeSearchQuery = async (queryVal) => {
+            // Guard clauses (Rate Limit UI handled internally)
+            if(!checkRateLimit()) return; 
+            if(!checkSearchQuota()) return;
+            
+            const container = document.getElementById('search-results-list');
+            container.innerHTML = getListSkeletonHTML();
+            
+            decrementSearchQuota();
+
+            try {
+                // Parameter Parsing
+                const statusMap = { 'airing': 'airing', 'complete': 'complete', 'upcoming': 'upcoming' };
+                const st = statusMap[APP_STATE.activeFilters.status] || 'airing';
+                const srt = APP_STATE.activeFilters.sort || 'desc';
+
+                const url = `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(queryVal)}&status=${st}&order_by=score&sort=${srt}&sfw=true`;
+                const res = await fetch(url).then(r=>r.json());
+                
+                let resultsHtml = '';
+                
+                if(res.data && res.data.length > 0) {
+                    res.data.forEach((a, idx) => {
+                        resultsHtml += `
+                            <div class="list-row anim-fade-up ripple-btn invert-ripple" style="animation-delay: ${idx * 0.05}s;" onclick="loadDetail(${a.mal_id})">
+                                <div class="list-thumb">
+                                    <div class="skeleton skel-cover"></div>
+                                    <img src="${a.images.jpg.image_url}" onload="this.style.opacity=1; this.previousElementSibling.remove()">
+                                </div>
+                                <div class="list-meta">
+                                    <h4>${a.title}</h4>
+                                    <p>
+                                        <span class="list-meta-score"><i data-lucide="star" size="10" fill="currentColor"></i> ${a.score || 'N/A'}</span> 
+                                        <span>${a.type}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                        // Inject Promotional Ad Banner every 3rd item for Guest users
+                        if(!APP_STATE.isPro && (idx + 1) % 3 === 0) {
+                            resultsHtml += getAdBannerHTML();
+                        }
+                    });
+                    container.innerHTML = resultsHtml;
+                    lucide.createIcons();
+                } else {
+                    container.innerHTML = `<div class="empty-state-container"><h3 class="empty-state-title">No results found.</h3><p class="empty-state-desc">Try different keywords or filters.</p></div>`;
+                }
+            } catch(e) { 
+                container.innerHTML = `<div class="empty-state-container"><i data-lucide="wifi-off" size="48" color="var(--error-red)" class="empty-state-icon"></i><h3 class="empty-state-title">Connection Unstable</h3></div>`; 
+                lucide.createIcons();
+            }
+        };
+
+        // Attach Search Triggers
+        document.getElementById('btn-fire-search').addEventListener('click', () => {
+            const val = document.getElementById('main-search-input').value.trim();
+            if(val) executeSearchQuery(val);
+        });
+
+        document.getElementById('main-search-input').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') {
+                const val = e.target.value.trim();
+                if(val) {
+                    // Unfocus input to dismiss mobile keyboard
+                    document.getElementById('main-search-input').blur();
+                    executeSearchQuery(val);
+                }
+            }
+        });
+
+        // --------------------------------------------------------------------------
+        // 13. ARTS TAB & DIRECT BLOB DOWNLOADING
+        // --------------------------------------------------------------------------
+        const loadDailyArts = async () => {
+            const grid = document.getElementById('wp-grid-container');
+            const today = new Date().toISOString().split('T')[0];
+            const cacheKey = 'bz_arts_' + today;
+            
+            // Check Daily Cache to prevent abuse
+            const cached = localStorage.getItem(cacheKey);
+            if(cached) {
+                renderArtsGrid(JSON.parse(cached));
+                return;
+            }
+
+            // Insert Skeletons
+            grid.innerHTML = Array(4).fill(`<div class="wp-item skeleton"></div>`).join('');
+            
+            try {
+                // Nekos.best API returns highly curated SFW anime wallpapers
+                const res = await fetch('https://nekos.best/api/v2/neko?amount=6').then(r=>r.json());
+                if(res.results) {
+                    const arts = res.results.map(img => img.url);
+                    localStorage.setItem(cacheKey, JSON.stringify(arts));
+                    renderArtsGrid(arts);
+                }
+            } catch(e) { 
+                grid.innerHTML = `<div class="empty-state-container" style="grid-column: 1/-1;"><i data-lucide="image-off" size="48" class="empty-state-icon"></i><h3 class="empty-state-title">Art Servers Offline</h3></div>`; 
+                lucide.createIcons();
+            }
+        };
+
+        const renderArtsGrid = (urls) => {
+            const grid = document.getElementById('wp-grid-container');
+            grid.innerHTML = urls.map((url, idx) => {
+                
+                // Guest Restraint Protocol: Only index 0 is free. Rest are locked visually.
+                const isLocked = !APP_STATE.isPro && idx > 0;
+                
+                if (isLocked) {
+                    return `
+                        <div class="wp-item locked anim-fade-up" style="animation-delay: ${idx * 0.08}s;" onclick="openModal('pro-gate-modal', 'pg-modal-inner')">
+                            <img src="${url}">
+                            <div class="wp-overlay">
+                                <i data-lucide="lock" size="32" class="wp-lock-icon"></i>
+                                <span class="wp-lock-text">Pro Unlock</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="wp-item anim-fade-up ripple-btn invert-ripple" style="animation-delay: ${idx * 0.08}s;" onclick="triggerDownloadConfirm('${url}')">
+                            <div class="skeleton skel-cover"></div>
+                            <img src="${url}" onload="this.style.opacity=1; this.previousElementSibling.remove()">
+                            <div class="wp-overlay">
+                                <div class="wp-btn"><i data-lucide="download" size="18"></i> Get HD</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+            lucide.createIcons();
+        };
+
+        /**
+         * Sets up the Download Action via the Custom Modal Dialog
+         */
+        const triggerDownloadConfirm = (url) => {
+            APP_STATE.pendingDownloadUrl = url;
+            openModal('download-modal', 'dl-modal-inner');
+        };
+
+        /**
+         * Background Blob Fetcher to force browser download directly to filesystem
+         */
+        document.getElementById('btn-exec-download').addEventListener('click', async () => {
+            closeModal('download-modal', 'dl-modal-inner');
+            showToast("Fetching high-res blob...");
+            
+            try {
+                // Fetch Request directly gets the blob
+                const response = await fetch(APP_STATE.pendingDownloadUrl);
+                const blob = await response.blob();
+                const urlObj = window.URL.createObjectURL(blob);
+                
+                // Create an invisible anchor to simulate click
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = urlObj;
+                a.download = `benzyten_art_${Date.now()}.jpg`;
+                
+                document.body.appendChild(a);
+                a.click();
+                
+                // Memory Cleanup
+                window.URL.revokeObjectURL(urlObj);
+                document.body.removeChild(a);
+                showToast("Download Complete!", "success");
+            } catch(e) {
+                // If CORS blocks the fetch, default to opening in a new tab securely.
+                console.warn("CORS Blocked Blob Fetch. Falling back to native open.");
+                showToast("Opening secure channel...", "warning");
+                window.open(APP_STATE.pendingDownloadUrl, '_blank');
+            }
+        });
+
+        // ==========================================================================
+        // Initialize Application Core
+        // ==========================================================================
+        bootApplication();
+
+    </script>
+</body>
+</html>
